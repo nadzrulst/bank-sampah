@@ -1,74 +1,186 @@
 <template>
-  <div class="min-h-screen bg-background px-4 py-6 pb-28 text-slate-900 md:px-8">
-    <div class="mx-auto max-w-5xl">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-primary">Modul Keuangan</p>
-          <h1 class="text-2xl font-semibold">Biaya, Dana Masuk, dan Laporan</h1>
+  <div class="min-h-screen bg-background px-4 text-on-surface md:px-0 pb-24">
+    <div class="mx-auto max-w-md">
+      <!-- Top bar -->
+      <header class="flex items-center justify-between py-4 px-2">
+        <button @click="$router.back()" class="text-primary text-lg">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h1 class="font-headline-md text-headline-md text-primary">
+          Catat Biaya
+        </h1>
+        <div
+          class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-sm font-bold text-primary"
+        >
+          BK
         </div>
-        <router-link to="/dashboard" class="rounded-full border border-slate-200 px-3 py-2 text-sm font-medium">Kembali</router-link>
-      </div>
+      </header>
 
-      <div class="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
-        <section class="rounded-3xl bg-white p-5 shadow-sm">
-          <h2 class="text-lg font-semibold">Catat Keuangan</h2>
-          <div class="mt-4 grid gap-3 md:grid-cols-2">
-            <div>
-              <label class="mb-2 block text-sm font-medium">Jenis</label>
-              <input v-model="jenis" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none" placeholder="Contoh: Biaya operasional" />
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-medium">Nominal</label>
-              <input v-model.number="nominal" type="number" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 outline-none" placeholder="500000" />
-            </div>
+      <!-- Saldo Card -->
+      <section class="p-4">
+        <div class="rounded-2xl bg-white p-4 soft-float">
+          <p class="text-sm text-slate-500">Saldo Saat Ini</p>
+          <p class="mt-3 text-2xl font-bold text-primary">Rp 650.000</p>
+        </div>
+      </section>
+
+      <!-- Form -->
+      <form class="px-4 space-y-4">
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700"
+            >Nominal</label
+          >
+          <div class="rounded-2xl bg-white p-3 soft-float flex items-center">
+            <span class="text-sm text-on-surface-variant mr-3">Rp</span>
+            <input
+              v-model.number="nominal"
+              type="number"
+              placeholder="0"
+              class="w-full bg-transparent outline-none text-lg font-semibold"
+            />
           </div>
-          <button class="mt-4 w-full rounded-2xl bg-primary px-4 py-3 font-semibold text-white" @click="submitKeuangan">
-            Simpan Catatan Keuangan
+        </div>
+
+        <div>
+          <p class="text-sm font-medium text-slate-700 mb-2">Kategori</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="c in categories"
+              :key="c"
+              type="button"
+              @click="selectCategory(c)"
+              :class="[
+                'px-4 py-2 rounded-full text-sm',
+                selectedCategory === c
+                  ? 'bg-primary text-white'
+                  : 'bg-surface-container text-on-surface',
+              ]"
+            >
+              {{ c }}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700"
+            >Keterangan</label
+          >
+          <textarea
+            v-model="keterangan"
+            rows="4"
+            class="w-full rounded-2xl bg-white p-3 soft-float outline-none"
+            placeholder="Tuliskan detail biaya..."
+          ></textarea>
+        </div>
+
+        <div>
+          <p class="text-sm font-medium text-slate-700 mb-2">
+            Foto Bukti (Opsional)
+          </p>
+          <label
+            class="block rounded-2xl border-2 border-dashed border-surface-container p-6 text-center bg-white soft-float cursor-pointer"
+          >
+            <input
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleFile"
+            />
+            <div
+              class="mx-auto w-12 h-12 rounded-full bg-surface-container flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-primary"
+                >add_a_photo</span
+              >
+            </div>
+            <p class="mt-2 text-sm text-on-surface-variant">
+              Ketuk untuk unggah foto nota atau struk
+            </p>
+          </label>
+        </div>
+      </form>
+
+      <!-- Sticky action -->
+      <div
+        class="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-md p-4 border-t border-slate-100 z-50"
+      >
+        <div class="max-w-md mx-auto flex items-center justify-between gap-4">
+          <div>
+            <p class="text-sm text-on-surface-variant">Saldo setelah biaya:</p>
+            <p class="text-base font-semibold text-primary">
+              {{ formatRupiah(saldoAfter) }}
+            </p>
+          </div>
+          <button
+            @click.prevent="submitKeuangan"
+            class="ml-2 flex-1 rounded-2xl bg-primary py-3 text-white font-semibold"
+          >
+            Simpan Biaya
           </button>
-        </section>
-
-        <section class="rounded-3xl bg-white p-5 shadow-sm">
-          <h2 class="text-lg font-semibold">Ringkasan Kas</h2>
-          <div class="mt-4 space-y-3 text-sm">
-            <div class="rounded-2xl bg-slate-50 p-4">
-              <p class="text-slate-500">Saldo Kas</p>
-              <p class="mt-1 text-xl font-semibold text-slate-900">Rp 3.450.000</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 p-4">
-              <p class="text-slate-500">Rekonsiliasi</p>
-              <p class="mt-1 text-lg font-semibold text-slate-900">Tersedia</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 p-4">
-              <p class="text-slate-500">Laporan</p>
-              <p class="mt-1 text-lg font-semibold text-slate-900">Siap ditampilkan</p>
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
     </div>
-    <BottomNav />
   </div>
 </template>
 
 <script setup>
-import BottomNav from '../components/BottomNav.vue'
-import { ref } from 'vue'
-import { submitBiaya } from '../services/api'
+import { ref, computed } from "vue";
+import { submitBiaya } from "../services/api";
 
-const jenis = ref('')
-const nominal = ref(0)
+const nominal = ref(0);
+const jenis = ref("");
+const keterangan = ref("");
+const selectedCategory = ref("Angkut");
+const categories = [
+  "Angkut",
+  "Karung",
+  "Konsumsi",
+  "Alat Tulis",
+  "Perawatan",
+  "Kegiatan Sosial",
+  "Lainnya",
+];
+const saldoAwal = ref(650000);
+
+const saldoAfter = computed(() => {
+  const n = Number(nominal.value) || 0;
+  return Math.max(0, saldoAwal.value - n);
+});
+
+function formatRupiah(value) {
+  return "Rp " + Number(value).toLocaleString("id-ID");
+}
+
+function selectCategory(cat) {
+  selectedCategory.value = cat;
+}
+
+function handleFile(e) {
+  // no-op for demo; could store file for upload
+}
 
 async function submitKeuangan() {
-  if (!jenis.value || !nominal.value) {
-    alert('Harap isi jenis dan nominal keuangan.')
-    return
+  if (!selectedCategory.value) {
+    alert("Pilih kategori terlebih dahulu.");
+    return;
+  }
+
+  if (!nominal.value) {
+    alert("Masukkan nominal biaya.");
+    return;
   }
 
   try {
-    await submitBiaya({ nominal: nominal.value, keterangan: jenis.value })
-    alert('Catatan keuangan berhasil dikirim.')
-  } catch (error) {
-    alert('Gagal mengirim data keuangan.')
+    await submitBiaya({
+      jenis: selectedCategory.value,
+      nominal: Number(nominal.value),
+      keterangan: keterangan.value,
+    });
+    alert("Catatan keuangan berhasil dikirim.");
+    nominal.value = 0;
+    keterangan.value = "";
+  } catch (err) {
+    alert("Gagal mengirim data keuangan.");
   }
 }
 </script>
