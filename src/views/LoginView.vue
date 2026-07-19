@@ -189,6 +189,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { loginOperator } from "../services/api";
 
 const router = useRouter();
 
@@ -201,25 +202,31 @@ const loading = ref(false);
 async function handleLogin() {
 
   if (!phone.value || !password.value) {
-    alert("Silakan isi nomor handphone dan password.");
+    alert("Silakan isi username dan password.");
     return;
   }
 
   loading.value = true;
 
   try {
+    const response = await loginOperator({
+      username: phone.value.trim(),
+      password: password.value,
+    });
 
-    // Ganti dengan API Login Anda nanti
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    if (!response?.success) {
+      throw new Error(response?.message || "Username atau password salah.");
+    }
 
+    const userData = response?.data || {};
+    localStorage.setItem("operator", JSON.stringify(userData));
     router.push("/dashboard");
 
   } catch (error) {
-
-    alert("Login gagal.");
+    console.error("Login gagal:", error);
+    alert(error?.message || "Login gagal. Periksa username dan password Anda.");
 
   } finally {
-
     loading.value = false;
 
   }

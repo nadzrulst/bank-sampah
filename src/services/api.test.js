@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { getDashboardData, loginWarga, submitSetoran } from './api'
+import { getDashboardData, loginOperator, loginWarga, submitSetoran } from './api'
 
 describe('api service', () => {
-  beforeEach(() => {
+  beforeEach(() => {  
     vi.stubGlobal('fetch', vi.fn())
   })
 
@@ -42,6 +42,26 @@ describe('api service', () => {
     const [, options] = vi.mocked(fetch).mock.calls[0]
     expect(options.body).toContain('simpan_setoran')
     expect(result.data.id_setoran).toBe('STR-1')
+  })
+
+  it('mengirimkan username dan password untuk login operator lewat POST', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      text: async () => JSON.stringify({ success: true, data: { nama: 'Sari' } })
+    })
+
+    const result = await loginOperator({ username: 'sari', password: 'rahasia123' })
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ method: 'POST' })
+    )
+
+    const [, options] = vi.mocked(fetch).mock.calls[0]
+    expect(options.body).toContain('login_operator')
+    expect(options.body).toContain('sari')
+    expect(options.body).toContain('rahasia123')
+    expect(result.data.nama).toBe('Sari')
   })
 
   it('mengirimkan username dan nomor HP untuk login warga lewat POST', async () => {
