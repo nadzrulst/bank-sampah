@@ -1,229 +1,166 @@
 <template>
-  <div class="min-h-screen bg-[#eef4ff] max-w-md mx-auto pb-28 text-slate-900">
-    <main class="px-6 pt-6 pb-4">
-      <header
-        class="mb-6 flex items-center justify-between gap-4 rounded-[28px] bg-white px-5 py-5 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.35)] border border-slate-200"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="h-12 w-12 rounded-3xl bg-green-50 flex items-center justify-center text-2xl"
-          >
-            👤
-          </div>
-          <div>
-            <p class="text-sm font-medium text-slate-500">
-              Informasi & Riwayat
-            </p>
-            <h1 class="text-xl font-semibold text-slate-900">
-              Warga Bank Sampah
-            </h1>
-          </div>
-        </div>
-
-        <button
-          class="h-11 w-11 rounded-2xl bg-slate-100 text-xl text-slate-600 shadow-sm"
+  <div
+    class="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(172,239,230,0.35),_transparent_40%),linear-gradient(135deg,_#f8fbff_0%,_#f5f7ff_100%)] flex items-center justify-center px-4 py-8"
+  >
+    <div
+      class="w-full max-w-md rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-[0_20px_50px_rgba(0,58,54,0.12)] backdrop-blur"
+    >
+      <!-- Logo -->
+      <div class="flex flex-col items-center text-center">
+        <div
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#003A36] text-3xl text-white"
         >
-          🔔
-        </button>
-      </header>
-
-      <section
-        class="mb-5 rounded-[32px] bg-white p-5 shadow-sm border border-gray-100"
-      >
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <p class="text-sm font-semibold text-slate-900">Riwayat Poin</p>
-            <p class="text-xs text-slate-500">Lihat semua</p>
-          </div>
-          <span
-            class="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-800"
-            >Terbaru</span
-          >
+          <span class="material-symbols-outlined">
+            account_balance_wallet
+          </span>
         </div>
 
-        <div class="space-y-3">
-          <div class="rounded-3xl border border-slate-200 p-4 shadow-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center text-xl"
-                >
-                  ♻️
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-900">
-                    Setoran Botol Plastik
-                  </p>
-                  <p class="text-sm text-slate-500">12 Okt 2023 · 14:20</p>
-                </div>
-              </div>
-              <p class="text-lg font-semibold text-green-700">+45 Poin</p>
-            </div>
-          </div>
+        <h1 class="text-2xl font-semibold text-[#003A36]">
+          Cek Data Warga
+        </h1>
 
-          <div class="rounded-3xl border border-slate-200 p-4 shadow-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="h-11 w-11 rounded-3xl bg-slate-100 flex items-center justify-center text-xl"
-                >
-                  🛒
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-900">Tukar Beras 5kg</p>
-                  <p class="text-sm text-slate-500">08 Okt 2023 · 09:15</p>
-                </div>
-              </div>
-              <p class="text-lg font-semibold text-red-600">-150 Poin</p>
-            </div>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 p-4 shadow-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center text-xl"
-                >
-                  📄
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-900">
-                    Setoran Koran & Kertas
-                  </p>
-                  <p class="text-sm text-slate-500">03 Okt 2023 · 16:45</p>
-                </div>
-              </div>
-              <p class="text-lg font-semibold text-green-700">+28 Poin</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="mb-5 rounded-[32px] bg-white p-5 shadow-sm border border-gray-100"
-      >
-        <p class="mb-4 text-sm font-semibold text-slate-900">
-          Informasi Bank Sampah
+        <p class="mt-2 text-sm text-slate-600">
+          Masukkan Username dan Nomor HP untuk melihat informasi poin dan
+          riwayat setoran.
         </p>
-        <div class="overflow-hidden rounded-[28px] bg-white">
-          <iframe
-            title="Lokasi Bank Sampah"
-            src="https://www.google.com/maps?q=-6.164774,107.28062&z=16&output=embed"
-            class="h-40 w-full border-0"
-            allowfullscreen=""
-            loading="lazy"
-          ></iframe>
+      </div>
+
+      <!-- Form -->
+      <div class="mt-8">
+
+        <!-- Username -->
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Username
+          </label>
+
+          <div class="relative">
+
+            <UserIcon
+              class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#003A36]"
+            />
+
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Masukkan Username"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pl-11 outline-none transition focus:border-[#003A36]"
+            />
+
+          </div>
         </div>
 
-        <div class="mt-4 space-y-4">
-          <div
-            class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
-          >
-            <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-600 text-xl"
-              >📞</span
-            >
-            <div>
-              <p class="text-sm text-slate-500">WhatsApp Center</p>
-              <p class="font-semibold text-slate-900">+62 812-3456-7890</p>
-            </div>
-          </div>
+        <!-- Nomor HP -->
+        <div class="mt-4">
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Nomor HP
+          </label>
 
-          <div
-            class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
-          >
-            <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 text-xl"
-              >🕒</span
-            >
-            <div>
-              <p class="text-sm text-slate-500">Jam Operasional</p>
-              <p class="font-semibold text-slate-900">
-                Senin - Sabtu (08:00 - 16:00)
-              </p>
-            </div>
-          </div>
+          <div class="relative">
 
-          <div
-            class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
+            <PhoneIcon
+              class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#003A36]"
+            />
+
+            <input
+              v-model="nomorHp"
+              type="text"
+              placeholder="08123456789"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pl-11 outline-none transition focus:border-[#003A36]"
+            />
+
+          </div>
+        </div>
+
+        <!-- Tombol -->
+        <button
+          @click="loadWargaData"
+          :disabled="loading"
+          class="mt-6 flex w-full items-center justify-center rounded-xl bg-[#003A36] px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        >
+          {{ loading ? "Memuat..." : "Lihat Informasi" }}
+        </button>
+
+        <!-- Login -->
+        <div class="mt-5 text-center">
+
+          <router-link
+            to="/login"
+            class="text-sm font-medium text-[#003A36] underline underline-offset-2 transition hover:text-[#00584F]"
           >
-            <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 text-xl"
-              >📍</span
-            >
-            <div>
-              <p class="text-sm text-slate-500">Alamat Kantor</p>
-              <p class="font-semibold text-slate-900">
-                DUSUN BOJONG KARYA 2, RT 010, RW 000, DESA RENGASDENGKLOK
-                SELATAN, KECAMATAN RENGASDENGKLOK SELATAN.
-              </p>
-              <a
-                href="https://www.google.com/maps/place/6%C2%B009'53.2%22S+107%C2%B016'50.2%22E/@-6.164774,107.28062,697m"
-                target="_blank"
-                rel="noreferrer"
-                class="text-xs text-slate-500 mt-1 inline-block hover:text-slate-900"
+            Login
+          </router-link>
+
+        </div>
+
+        <!-- Data -->
+        <div
+          v-if="warga"
+          class="mt-6 rounded-2xl border border-[#003A36]/20 bg-[#003A36]/5 p-4"
+        >
+          <h3 class="mb-3 text-lg font-semibold text-[#003A36]">
+            Data Warga
+          </h3>
+
+          <div class="space-y-3 text-sm">
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Nama</span>
+              <span class="font-medium">{{ warga.nama }}</span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Total Poin</span>
+              <span class="font-medium">{{ warga.total_poin }}</span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Total Tabungan</span>
+              <span class="font-medium">
+                Rp {{ warga.total_tabungan }}
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Status</span>
+
+              <span
+                class="rounded-full bg-[#003A36] px-3 py-1 text-xs font-medium text-white"
               >
-                Lihat di Google Maps • 6°09'53.2"S 107°16'50.2"E
-              </a>
+                Aktif
+              </span>
             </div>
+
           </div>
         </div>
 
-        <div class="mt-5 grid gap-3">
-          <button
-            class="w-full rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm"
-            @click="openWhatsApp"
-          >
-            Hubungi via WhatsApp
-          </button>
-          <button
-            class="w-full rounded-3xl bg-emerald-900 px-4 py-3 text-sm font-semibold text-white shadow-sm"
-            @click="openGoogleMaps"
-          >
-            Buka di Google Maps
-          </button>
-        </div>
-      </section>
+      </div>
 
-      <section
-        class="rounded-[32px] bg-gradient-to-b from-emerald-900 to-emerald-800 p-5 text-white shadow-sm"
-      >
-        <p class="text-lg font-semibold">Yuk, Ajak Tetangga!</p>
-        <p class="mt-3 text-sm text-white/80">
-          Dapatkan bonus 50 poin untuk setiap warga baru yang bergabung melalui
-          kode referral Anda.
-        </p>
-        <button
-          class="mt-5 w-full rounded-3xl bg-white px-4 py-3 text-sm font-semibold text-emerald-950"
-          @click="copyReferralCode"
-        >
-          Bagikan Kode
-        </button>
-      </section>
-    </main>
+      <!-- Footer -->
+      <div class="mt-6 border-t border-slate-200 pt-4 text-center text-sm text-slate-500">
+        © 2026 KKN Universitas Buana Perjuangan Karawang
+      </div>
 
+    </div>
     <BottomNav />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import BottomNav from "../components/BottomNav.vue";
+import BottomNav from '../components/BottomNav.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { UserIcon, PhoneIcon } from "@heroicons/vue/24/solid";
+const router = useRouter()
+const phone = ref('')
+const password = ref('')
 
-function openWhatsApp() {
-  window.open("https://wa.me/6281234567890", "_blank");
-}
+function handleLogin() {
+  if (!phone.value || !password.value) {
+    alert('Isi nomor handphone dan password terlebih dahulu.')
+    return
+  }
 
-function openGoogleMaps() {
-  window.open(
-    "https://www.google.com/maps/place/6%C2%B009'53.2%22S+107%C2%B016'50.2%22E/@-6.164774,107.28062,697m",
-    "_blank",
-  );
-}
-
-function copyReferralCode() {
-  const code = "REF12345";
-  navigator.clipboard.writeText(code).catch(() => null);
-  alert(`Kode referral disalin: ${code}`);
+  router.push('/dashboard')
 }
 </script>

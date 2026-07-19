@@ -157,9 +157,10 @@
           </button>
         </div>
       </section>
+      <BottomNav />
     </main>
 
-    <BottomNav />
+
   </div>
 </template>
 

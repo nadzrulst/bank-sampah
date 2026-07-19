@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed bottom-0 left-0 right-0 mx-auto max-w-md border-t border-gray-100 bg-white px-6 pt-3 pb-5">
+  <nav class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-gray-100 bg-white px-6 pt-3 pb-5 shadow-lg">
     <div class="flex justify-between">
       <router-link
         v-for="item in navItems"
