@@ -6,24 +6,24 @@ import TransaksiView from '../views/TransaksiView.vue'
 import KeuanganView from '../views/KeuanganView.vue'
 
 const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', name: 'login', component: LoginView },
-  { path: '/dashboard', name: 'dashboard', component: HomeView },
-  { path: '/warga', name: 'warga', component: WargaView },
-  { path: '/transaksi', name: 'transaksi', component: TransaksiView },
-  { path: '/keuangan', name: 'keuangan', component: KeuanganView },
-  {
-  path: '/uji-api',
-  name: 'uji-api',
-  component: () =>
-    import('../views/TestApiView.vue')
-}
+    { path: '/', redirect: '/warga' },
+    { path: '/login', name: 'login', component: LoginView },
+    { path: '/dashboard', name: 'dashboard', component: HomeView },
+    { path: '/warga', name: 'warga', component: WargaView },
+    { path: '/transaksi', name: 'transaksi', component: TransaksiView },
+    { path: '/keuangan', name: 'keuangan', component: KeuanganView },
+    {
+        path: '/uji-api',
+        name: 'uji-api',
+        component: () =>
+            import ('../views/TestApiView.vue')
+    }
 ]
 
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+    history: createWebHistory(),
+    routes
 })
 
 export default router
