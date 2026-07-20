@@ -155,6 +155,17 @@
         </button>
 
       </form>
+      <!-- Login -->
+        <div class="mt-5 text-center">
+
+          <router-link
+            to="/login-warga"
+            class="text-sm font-medium text-[#003A36] underline underline-offset-2 transition hover:text-[#00584F]"
+          >
+            Masuk sebagai Warga
+          </router-link>
+
+        </div>
 
       <!-- Footer -->
       <p
@@ -165,8 +176,9 @@
         <span class="font-semibold text-[#003A36]">
           IT Support Center
         </span>
+        <br />
 
-        atau manajer operasional wilayah.
+        KKN UBP Rengasdengklok Selatan 2026
 
       </p>
 

@@ -15,38 +15,31 @@
           </span>
         </div>
 
-        <h1 class="text-2xl font-semibold text-[#003A36]">
-          Cek Data Warga
-        </h1>
+        <h1 class="text-2xl font-semibold text-[#003A36]">Login Warga</h1>
 
         <p class="mt-2 text-sm text-slate-600">
-          Masukkan Username dan Nomor HP untuk melihat informasi poin dan
-          riwayat setoran.
+          Masukkan Username dan Nomor HP untuk masuk ke dashboard Anda.
         </p>
       </div>
 
       <!-- Form -->
       <div class="mt-8">
-
         <!-- Username -->
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-700">
             Username
           </label>
-
           <div class="relative">
-
             <UserIcon
               class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#003A36]"
             />
-
             <input
               v-model="username"
               type="text"
               placeholder="Masukkan Username"
+              @keyup.enter="handleLogin"
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pl-11 outline-none transition focus:border-[#003A36]"
             />
-
           </div>
         </div>
 
@@ -55,112 +48,92 @@
           <label class="mb-2 block text-sm font-medium text-slate-700">
             Nomor HP
           </label>
-
           <div class="relative">
-
             <PhoneIcon
               class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#003A36]"
             />
-
             <input
               v-model="nomorHp"
               type="text"
               placeholder="08123456789"
+              @keyup.enter="handleLogin"
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pl-11 outline-none transition focus:border-[#003A36]"
             />
-
           </div>
         </div>
 
         <!-- Tombol -->
         <button
-          @click="loadWargaData"
+          @click="handleLogin"
           :disabled="loading"
           class="mt-6 flex w-full items-center justify-center rounded-xl bg-[#003A36] px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
         >
-          {{ loading ? "Memuat..." : "Lihat Informasi" }}
+          {{ loading ? "Memuat..." : "Masuk" }}
         </button>
 
-        <!-- Login -->
+        <!-- Login Pengelola -->
         <div class="mt-5 text-center">
-
           <router-link
             to="/login"
             class="text-sm font-medium text-[#003A36] underline underline-offset-2 transition hover:text-[#00584F]"
           >
-            Login
+            Login Pengelola
           </router-link>
-
         </div>
 
-        <!-- Data -->
-        <div
-          v-if="warga"
-          class="mt-6 rounded-2xl border border-[#003A36]/20 bg-[#003A36]/5 p-4"
-        >
-          <h3 class="mb-3 text-lg font-semibold text-[#003A36]">
-            Data Warga
-          </h3>
-
-          <div class="space-y-3 text-sm">
-
-            <div class="flex justify-between">
-              <span class="text-slate-500">Nama</span>
-              <span class="font-medium">{{ warga.nama }}</span>
-            </div>
-
-            <div class="flex justify-between">
-              <span class="text-slate-500">Total Poin</span>
-              <span class="font-medium">{{ warga.total_poin }}</span>
-            </div>
-
-            <div class="flex justify-between">
-              <span class="text-slate-500">Total Tabungan</span>
-              <span class="font-medium">
-                Rp {{ warga.total_tabungan }}
-              </span>
-            </div>
-
-            <div class="flex justify-between">
-              <span class="text-slate-500">Status</span>
-
-              <span
-                class="rounded-full bg-[#003A36] px-3 py-1 text-xs font-medium text-white"
-              >
-                Aktif
-              </span>
-            </div>
-
-          </div>
+        <!-- Pesan error -->
+        <div v-if="error" class="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
+          {{ error }}
         </div>
-
       </div>
 
       <!-- Footer -->
       <div class="mt-6 border-t border-slate-200 pt-4 text-center text-sm text-slate-500">
         © 2026 KKN Universitas Buana Perjuangan Karawang
       </div>
-
     </div>
-    <BottomNav />
   </div>
 </template>
 
 <script setup>
-import BottomNav from '../components/BottomNav.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { UserIcon, PhoneIcon } from "@heroicons/vue/24/solid";
-const router = useRouter()
-const phone = ref('')
-const password = ref('')
+import { UserIcon, PhoneIcon } from "@heroicons/vue/24/solid"
+import { loginWarga } from '../services/api'
 
-function handleLogin() {
-  if (!phone.value || !password.value) {
-    alert('Isi nomor handphone dan password terlebih dahulu.')
+const router = useRouter()
+const username = ref('')
+const nomorHp = ref('')
+const loading = ref(false)
+const error = ref('')
+
+async function handleLogin() {
+  error.value = ''
+  if (!username.value.trim() || !nomorHp.value.trim()) {
+    error.value = 'Username dan Nomor HP harus diisi.'
     return
   }
+  loading.value = true
+  try {
+    const response = await loginWarga({
+      username: username.value.trim(),
+      no_hp: nomorHp.value.trim()
+    })
+    let dataWarga = null
+    if (response?.data) dataWarga = response.data
+    else if (response?.nama) dataWarga = response
+    else if (typeof response === 'object' && Object.keys(response).length) dataWarga = response
 
-  router.push('/dashboard')
+    if (dataWarga) {
+      localStorage.setItem('warga', JSON.stringify(dataWarga))
+      router.push('/warga')
+    } else {
+      error.value = 'Username atau Nomor HP salah.'
+    }
+  } catch (err) {
+    error.value = err.message || 'Terjadi kesalahan.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
