@@ -13,6 +13,8 @@ import InformasiView from "../views/InformasiView.vue";
 
 import LoginWarga from "../views/LoginWarga.vue";
 import DashboardWarga from "../views/warga/DashboardWarga.vue";
+import KatalogView from "../views/warga/KatalogView.vue";
+import KatalogPengelolaView from "../views/KatalogPengelolaView.vue";
 
 const routes = [
     { path: "/", redirect: "/warga" },
@@ -27,10 +29,12 @@ const routes = [
     { path: "/laporan", name: "laporan", component: LaporanView },
     { path: "/password", name: "LupaPassword", component: LupaPasswordView },
     { path: "/informasi", name: "Informasi", component: InformasiView },
+    { path: "/katalog-pengelola", name: "katalog-pengelola", component: KatalogPengelolaView },
 
     // Portal Warga
     { path: "/login-warga", name: "login-warga", component: LoginWarga },
     { path: "/warga", name: "warga", component: DashboardWarga },
+    { path: "/katalog", name: "katalog", component: KatalogView },
 
     {
         path: "/uji-api",

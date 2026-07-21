@@ -51,8 +51,29 @@
           :key="item.id"
           class="bg-white rounded-xl shadow-sm p-3 border border-gray-100 text-center"
         >
-          <div class="w-full h-16 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-            {{ item.icon }}
+          <div class="w-full h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+            <svg v-if="item.icon === 'beras'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <path d="M4 8h13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" />
+              <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+              <path d="M17 8V6" />
+              <circle cx="9" cy="16" r="1" fill="#147052" stroke="none" />
+              <circle cx="15" cy="16" r="1" fill="#147052" stroke="none" />
+            </svg>
+            <svg v-else-if="item.icon === 'minyak'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <rect x="5" y="4" width="10" height="16" rx="2" />
+              <path d="M15 8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+              <path d="M8 8h2" />
+              <path d="M8 12h2" />
+            </svg>
+            <svg v-else-if="item.icon === 'gula'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <path d="M5 8c0-2 2-4 5-4 3 0 5 2 5 4 0 3-2 4-5 6-3-2-5-3-5-6Z" />
+              <path d="M6 12c2 1 3 2 4 3" />
+              <path d="M14 12c-1 1-2 2-3 3" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 8v4l2 2" />
+            </svg>
           </div>
           <p class="text-sm font-medium text-gray-800 mt-2 line-clamp-1">{{ item.nama }}</p>
           <p class="text-xs font-bold text-[#003A36] mt-1">{{ item.poin }} Poin</p>
@@ -75,7 +96,26 @@
           :key="index"
           class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex items-start gap-3"
         >
-          <div class="text-2xl">{{ getIcon(item.judul) }}</div>
+          <div class="shrink-0 mt-0.5">
+            <svg v-if="getIconType(item.judul) === 'jadwal'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M16 2v4" />
+              <path d="M8 2v4" />
+              <path d="M3 10h18" />
+            </svg>
+            <svg v-else-if="getIconType(item.judul) === 'promo'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M12 2 14.5 8 21 8l-4.5 3.5 1.5 6-5-3.5-5 3.5 1.5-6L3 8h6.5L12 2Z" />
+            </svg>
+            <svg v-else-if="getIconType(item.judul) === 'edukasi'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M12 3 4 7l8 4 8-4-8-4Z" />
+              <path d="M4 12l8 4 8-4" />
+              <path d="M4 17l8 4 8-4" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 8v4l2 2" />
+            </svg>
+          </div>
           <div class="flex-1">
             <p class="text-xs font-bold text-[#003A36] uppercase tracking-wide">
               {{ item.jenis || 'INFO' }}
@@ -93,21 +133,34 @@
         <button
           class="flex flex-col items-center text-[#003A36] font-medium text-xs"
         >
-          <span class="text-2xl">🏠</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="m3 10 9-7 9 7" />
+            <path d="M5 10v8a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-8" />
+          </svg>
           Beranda
         </button>
         <button
           @click="keKatalog"
           class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
         >
-          <span class="text-2xl">📦</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 7h16" />
+            <path d="M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" />
+            <path d="M9 11h6" />
+            <path d="M9 15h6" />
+          </svg>
           Katalog
         </button>
         <button
           @click="keInformasi"
           class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
         >
-          <span class="text-2xl">📢</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 5h16" />
+            <path d="M4 10h16" />
+            <path d="M4 15h10" />
+            <path d="M16 15l2 2 4-4" />
+          </svg>
           Informasi
         </button>
       </div>
@@ -133,9 +186,9 @@ const warga = ref({
 
 // Data sembako (statis)
 const sembako = ref([
-  { id: 1, nama: 'Beras Premium 5kg', poin: 650, icon: '🍚' },
-  { id: 2, nama: 'Minyak Goreng 2L', poin: 320, icon: '🛢️' },
-  { id: 3, nama: 'Gula Pasir 1kg', poin: 150, icon: '🍬' },
+  { id: 1, nama: 'Beras Premium 5kg', poin: 650, icon: 'beras' },
+  { id: 2, nama: 'Minyak Goreng 2L', poin: 320, icon: 'minyak' },
+  { id: 3, nama: 'Gula Pasir 1kg', poin: 150, icon: 'gula' },
 ])
 
 const pengumuman = ref([])
@@ -160,12 +213,12 @@ async function fetchPengumuman() {
   }
 }
 
-function getIcon(judul) {
-  const kata = judul.toLowerCase()
-  if (kata.includes('jadwal') || kata.includes('penjemputan')) return '📅'
-  if (kata.includes('promo') || kata.includes('diskon')) return '🎉'
-  if (kata.includes('edukasi') || kata.includes('tips')) return '♻️'
-  return '📢'
+function getIconType(judul) {
+  const kata = (judul || '').toLowerCase()
+  if (kata.includes('jadwal') || kata.includes('penjemputan')) return 'jadwal'
+  if (kata.includes('promo') || kata.includes('diskon')) return 'promo'
+  if (kata.includes('edukasi') || kata.includes('tips')) return 'edukasi'
+  return 'info'
 }
 
 // Navigasi
