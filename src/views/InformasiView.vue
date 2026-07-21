@@ -202,13 +202,13 @@
       </section>
     </main>
 
-    <BottomNav />
+    <BottomNavWarga />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import BottomNav from "../components/BottomNav.vue";
+import BottomNavWarga from '../components/BottomNavWarga.vue'
 
 function openWhatsApp() {
   window.open("https://wa.me/6281234567890", "_blank");

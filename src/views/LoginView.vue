@@ -184,18 +184,6 @@
 
     </main>
 
-    <!-- Desktop Image -->
-    <div
-      class="fixed bottom-12 right-12 hidden h-64 w-64 rotate-3 overflow-hidden rounded-3xl border-8 border-white shadow-2xl lg:block"
-    >
-
-      <img
-        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0XEzK0vlDQAxiIlMYHQgbRaRTeyj1ZheekoZr-50k0d2RhiA0ibEJop1H0U19PIY8HYBhBd2fsBTKI3n1bCuhamjxAmknW5yJWLMSlOXIQoTItdxUkxJHJArLSILZzUau03Ht9uejnb6X9pdP6GceNkeAd8ngClycdWQlm__rd7dq5DnPlu7ih_woQdMzGcfEL7q50cdHO30Ov0QdS2ZD7m_mdzzyVD55HgEa1Km4qu6FvVNXRg0Cv1fAs1GHVfHTtvTqUT0IBlkq"
-        class="h-full w-full object-cover"
-      />
-
-    </div>
-
   </div>
 </template>
 <script setup>
