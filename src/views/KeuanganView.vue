@@ -19,13 +19,26 @@
       <!-- Saldo Card -->
       <section class="p-4">
         <div class="rounded-2xl bg-white p-4 soft-float">
-          <p class="text-sm text-slate-500">Saldo Saat Ini</p>
-          <p class="mt-3 text-2xl font-bold text-primary">Rp 650.000</p>
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-slate-500">Saldo Saat Ini</p>
+            <button 
+              @click="fetchSaldo" 
+              class="text-xs text-primary flex items-center gap-1 hover:underline"
+              :disabled="loadingSaldo"
+            >
+              <span class="material-symbols-outlined text-sm" :class="{ 'animate-spin': loadingSaldo }">refresh</span>
+              {{ loadingSaldo ? 'Memuat...' : 'Refresh' }}
+            </button>
+          </div>
+          <p class="mt-3 text-2xl font-bold text-primary">
+            <span v-if="loadingSaldo" class="text-slate-400 text-lg">Memuat saldo...</span>
+            <span v-else>{{ formatRupiah(saldoAwal) }}</span>
+          </p>
         </div>
       </section>
 
       <!-- Form -->
-      <form class="px-4 space-y-4">
+      <form class="px-4 space-y-4" @submit.prevent="submitKeuangan">
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-700"
             >Nominal</label
@@ -35,6 +48,7 @@
             <input
               v-model.number="nominal"
               type="number"
+              min="0"
               placeholder="0"
               class="w-full bg-transparent outline-none text-lg font-semibold"
             />
@@ -50,10 +64,10 @@
               type="button"
               @click="selectCategory(c)"
               :class="[
-                'px-4 py-2 rounded-full text-sm',
+                'px-4 py-2 rounded-full text-sm font-medium transition-colors',
                 selectedCategory === c
-                  ? 'bg-primary text-white'
-                  : 'bg-surface-container text-on-surface',
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-surface-container text-on-surface hover:bg-slate-200',
               ]"
             >
               {{ c }}
@@ -68,7 +82,7 @@
           <textarea
             v-model="keterangan"
             rows="4"
-            class="w-full rounded-2xl bg-white p-3 soft-float outline-none"
+            class="w-full rounded-2xl bg-white p-3 soft-float outline-none focus:ring-2 focus:ring-primary/20"
             placeholder="Tuliskan detail biaya..."
           ></textarea>
         </div>
@@ -78,7 +92,7 @@
             Foto Bukti (Opsional)
           </p>
           <label
-            class="block rounded-2xl border-2 border-dashed border-surface-container p-6 text-center bg-white soft-float cursor-pointer"
+            class="block rounded-2xl border-2 border-dashed border-surface-container p-6 text-center bg-white soft-float cursor-pointer hover:border-primary/50 transition-colors"
           >
             <input
               type="file"
@@ -113,9 +127,11 @@
           </div>
           <button
             @click.prevent="submitKeuangan"
-            class="ml-2 flex-1 rounded-2xl bg-primary py-3 text-white font-semibold"
+            :disabled="submitting"
+            class="ml-2 flex-1 rounded-2xl bg-primary py-3 text-white font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
-            Simpan Biaya
+            <span v-if="submitting" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+            <span>{{ submitting ? 'Menyimpan...' : 'Simpan Biaya' }}</span>
           </button>
         </div>
       </div>
@@ -124,11 +140,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { submitBiaya } from "../services/api";
+import { ref, computed, onMounted } from "vue";
+import { submitBiaya, getSaldoKas } from "../services/api";
 
 const nominal = ref(0);
-const jenis = ref("");
 const keterangan = ref("");
 const selectedCategory = ref("Angkut");
 const categories = [
@@ -140,7 +155,30 @@ const categories = [
   "Kegiatan Sosial",
   "Lainnya",
 ];
-const saldoAwal = ref(650000);
+
+const saldoAwal = ref(0);
+const loadingSaldo = ref(false);
+const submitting = ref(false);
+
+async function fetchSaldo() {
+  loadingSaldo.value = true;
+  try {
+    const res = await getSaldoKas();
+    if (res && res.success && res.data && typeof res.data.saldo !== "undefined") {
+      saldoAwal.value = Number(res.data.saldo) || 0;
+    } else if (res && typeof res.saldo !== "undefined") {
+      saldoAwal.value = Number(res.saldo) || 0;
+    }
+  } catch (err) {
+    console.error("Gagal mengambil saldo kas:", err);
+  } finally {
+    loadingSaldo.value = false;
+  }
+}
+
+onMounted(() => {
+  fetchSaldo();
+});
 
 const saldoAfter = computed(() => {
   const n = Number(nominal.value) || 0;
@@ -148,7 +186,7 @@ const saldoAfter = computed(() => {
 });
 
 function formatRupiah(value) {
-  return "Rp " + Number(value).toLocaleString("id-ID");
+  return "Rp " + Number(value || 0).toLocaleString("id-ID");
 }
 
 function selectCategory(cat) {
@@ -165,22 +203,36 @@ async function submitKeuangan() {
     return;
   }
 
-  if (!nominal.value) {
-    alert("Masukkan nominal biaya.");
+  if (!nominal.value || nominal.value <= 0) {
+    alert("Masukkan nominal biaya yang valid.");
     return;
   }
 
+  submitting.value = true;
   try {
-    await submitBiaya({
-      jenis: selectedCategory.value,
+    const ketFull = selectedCategory.value 
+      ? `[${selectedCategory.value}] ${keterangan.value || ''}`.trim() 
+      : keterangan.value;
+
+    const res = await submitBiaya({
       nominal: Number(nominal.value),
-      keterangan: keterangan.value,
+      keterangan: ketFull,
     });
-    alert("Catatan keuangan berhasil dikirim.");
-    nominal.value = 0;
-    keterangan.value = "";
+
+    if (res && res.success === false) {
+      alert("Gagal mencatat biaya: " + (res.message || "Terjadi kesalahan"));
+    } else {
+      alert("Catatan biaya berhasil disimpan.");
+      nominal.value = 0;
+      keterangan.value = "";
+      await fetchSaldo();
+    }
   } catch (err) {
-    alert("Gagal mengirim data keuangan.");
+    console.error("Error submitKeuangan:", err);
+    alert("Gagal mengirim data keuangan: " + (err.message || "Error koneksi"));
+  } finally {
+    submitting.value = false;
   }
 }
 </script>
+
