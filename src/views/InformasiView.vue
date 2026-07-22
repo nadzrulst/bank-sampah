@@ -6,9 +6,12 @@
       >
         <div class="flex items-center gap-3">
           <div
-            class="h-12 w-12 rounded-3xl bg-green-50 flex items-center justify-center text-2xl"
+            class="h-12 w-12 rounded-3xl bg-green-50 flex items-center justify-center"
           >
-            👤
+            <svg viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <circle cx="12" cy="8" r="3.4" />
+              <path d="M5.5 19c1.3-3 3.4-4.4 6.5-4.4s5.2 1.4 6.5 4.4" />
+            </svg>
           </div>
           <div>
             <p class="text-sm font-medium text-slate-500">
@@ -21,9 +24,13 @@
         </div>
 
         <button
-          class="h-11 w-11 rounded-2xl bg-slate-100 text-xl text-slate-600 shadow-sm"
+          class="h-11 w-11 rounded-2xl bg-slate-100 text-slate-600 shadow-sm flex items-center justify-center"
         >
-          🔔
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+            <path d="M10 5a2 2 0 0 1 4 0 4 4 0 0 0 3.9 4h.1v1.6c0 .8.2 1.5.6 2.2l1.2 1.7a1 1 0 0 1-.8 1.5H7.9a1 1 0 0 1-.8-1.5L8.3 9.4c.3-.7.5-1.4.5-2.2V9A4 4 0 0 0 10 5Z" />
+            <path d="M10 17a2 2 0 0 0 4 0" />
+            <circle cx="17.5" cy="6.5" r="2" fill="#147052" stroke="none" />
+          </svg>
         </button>
       </header>
 
@@ -46,9 +53,14 @@
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-center gap-3">
                 <div
-                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center text-xl"
+                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center"
                 >
-                  ♻️
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                    <path d="M7 7a4 4 0 0 1 7 1" />
+                    <path d="M11 6H7v4" />
+                    <path d="M17 17a4 4 0 0 1-7-1" />
+                    <path d="M13 18h4v-4" />
+                  </svg>
                 </div>
                 <div>
                   <p class="font-semibold text-slate-900">
@@ -65,9 +77,13 @@
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-center gap-3">
                 <div
-                  class="h-11 w-11 rounded-3xl bg-slate-100 flex items-center justify-center text-xl"
+                  class="h-11 w-11 rounded-3xl bg-slate-100 flex items-center justify-center"
                 >
-                  🛒
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                    <path d="M5 6h14l-1 7H7L5 6Z" />
+                    <circle cx="10" cy="18" r="1.2" fill="#64748b" stroke="none" />
+                    <circle cx="17" cy="18" r="1.2" fill="#64748b" stroke="none" />
+                  </svg>
                 </div>
                 <div>
                   <p class="font-semibold text-slate-900">Tukar Beras 5kg</p>
@@ -82,9 +98,12 @@
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-center gap-3">
                 <div
-                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center text-xl"
+                  class="h-11 w-11 rounded-3xl bg-green-50 flex items-center justify-center"
                 >
-                  📄
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                    <path d="M7 3h6l4 4v14H7z" />
+                    <path d="M13 3v4h4" />
+                  </svg>
                 </div>
                 <div>
                   <p class="font-semibold text-slate-900">
@@ -120,8 +139,10 @@
             class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
           >
             <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-600 text-xl"
-              >📞</span
+              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-600"
+              ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <path d="M7 4h4l2 4-2 2a13 13 0 0 0 5 5l2-2 4 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2h4Z" />
+              </svg></span
             >
             <div>
               <p class="text-sm text-slate-500">WhatsApp Center</p>
@@ -133,8 +154,11 @@
             class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
           >
             <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 text-xl"
-              >🕒</span
+              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700"
+              ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="M12 7.5v5l3 2" />
+              </svg></span
             >
             <div>
               <p class="text-sm text-slate-500">Jam Operasional</p>
@@ -148,8 +172,11 @@
             class="flex items-center gap-3 rounded-[26px] bg-[#f9fbff] p-4 shadow-sm border border-slate-200"
           >
             <span
-              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 text-xl"
-              >📍</span
+              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"
+              ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z" />
+                <circle cx="12" cy="11" r="2.2" />
+              </svg></span
             >
             <div>
               <p class="text-sm text-slate-500">Alamat Kantor</p>

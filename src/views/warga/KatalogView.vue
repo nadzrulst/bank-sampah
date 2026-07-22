@@ -1,207 +1,189 @@
 <template>
-  <div class="min-h-screen bg-[#F8F9FB] pb-28 font-sans relative max-w-md mx-auto">
-    <!-- Header -->
-    <header class="px-5 pt-8 pb-4 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden border border-gray-200 shadow-sm">
-          <img src="https://ui-avatars.com/api/?name=Ibu+Siti&background=random" alt="Profile" class="w-full h-full object-cover" />
+  <div class="min-h-screen bg-[#f9f9ff] text-slate-900 pb-24">
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100 px-4 py-4">
+      <div class="max-w-md mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#e8f4ef] flex items-center justify-center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M3 10 12 3l9 7" />
+              <path d="M5 10v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Bank Sampah</p>
+            <h1 class="text-lg font-bold text-[#003A36]">Katalog Sembako</h1>
+          </div>
         </div>
-        <h1 class="text-xl font-bold text-[#062923]">Katalog Sembako</h1>
+
+        <button class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+            <path d="M10 5a2 2 0 0 1 4 0 4 4 0 0 0 3.9 4h.1v1.6c0 .8.2 1.5.6 2.2l1.2 1.7a1 1 0 0 1-.8 1.5H7.9a1 1 0 0 1-.8-1.5L8.3 9.4c.3-.7.5-1.4.5-2.2V9A4 4 0 0 0 10 5Z" />
+            <path d="M10 17a2 2 0 0 0 4 0" />
+          </svg>
+        </button>
       </div>
-      <button class="p-2 text-gray-800 hover:bg-gray-200 rounded-full transition">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-        </svg>
-      </button>
     </header>
 
-    <!-- Search Bar -->
-    <div class="px-5 mt-1">
-      <div class="relative flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 absolute left-4 text-gray-400">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-        </svg>
-        <input 
-          v-model="searchQuery" 
-          type="text" 
-          placeholder="Cari beras, gula, atau lainnya..." 
-          class="w-full pl-12 pr-4 py-3.5 bg-white rounded-full text-sm text-gray-800 placeholder-gray-400 border border-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#004D40]"
-        />
-      </div>
-    </div>
-
-    <!-- Banner Poin Tersedia -->
-    <section class="px-5 mt-5">
-      <div class="bg-[#004D40] rounded-2xl p-5 text-white flex justify-between items-center shadow-md relative overflow-hidden">
-        <div>
-          <p class="text-xs text-[#8ABFB7] font-medium">Poin Tersedia</p>
-          <div class="flex items-center gap-2 mt-1">
-            <!-- Star Icon -->
-            <div class="w-6 h-6 rounded-full border border-white/60 flex items-center justify-center text-xs">
-              ★
-            </div>
-            <span class="text-3xl font-bold tracking-tight">{{ formatAngka(totalPoin) }}</span>
+    <main class="max-w-md mx-auto px-4 py-5">
+      <div class="space-y-4">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+              <circle cx="11" cy="11" r="6" />
+              <path d="m20 20-4.2-4.2" />
+            </svg>
           </div>
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Cari beras, gula, atau lainnya..."
+            class="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-100 shadow-sm outline-none focus:ring-2 focus:ring-[#003A36]/20"
+          />
         </div>
-        <button @click="keRiwayat" class="bg-[#1A4BFF] hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition shadow-sm">
-          Riwayat
-        </button>
-      </div>
-    </section>
 
-    <!-- Section Pilihan Terbaik -->
-    <section class="px-5 mt-7">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-[#062923]">Pilihan Terbaik</h2>
-        <button @click="lihatSemua" class="text-sm font-semibold text-[#1A4BFF] hover:underline">Lihat Semua</button>
-      </div>
-
-      <!-- Grid Produk (2 Kolom) -->
-      <div class="grid grid-cols-2 gap-4">
-        <div 
-          v-for="item in filteredProduk" 
-          :key="item.id" 
-          class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm flex flex-col justify-between"
-        >
-          <div>
-            <!-- Gambar Produk + Badge Ukuran -->
-            <div class="relative w-full aspect-square bg-[#F3F4F6] rounded-xl overflow-hidden mb-3">
-              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-[11px] font-bold text-gray-800 px-2 py-0.5 rounded-md shadow-xs z-10">
-                {{ item.ukuran }}
-              </span>
-              <img :src="item.image" :alt="item.nama" class="w-full h-full object-cover" />
-            </div>
-
-            <!-- Detail Produk -->
-            <h3 class="text-sm font-semibold text-gray-800 leading-snug line-clamp-1">{{ item.nama }}</h3>
-            <div class="flex items-center gap-1.5 mt-2 mb-3">
-              <div class="w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center text-[9px] text-gray-700">
-                ★
+        <div class="bg-[#00534d] rounded-2xl p-5 overflow-hidden relative shadow-sm text-white">
+          <div class="absolute top-0 right-0 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="h-[120px] w-[120px]">
+              <path d="M4 7h16" />
+              <path d="M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" />
+              <path d="M9 11h6" />
+              <path d="M9 15h6" />
+            </svg>
+          </div>
+          <div class="relative z-10 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm text-white/80">Poin Tersedia</p>
+              <div class="flex items-center gap-2 mt-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                  <path d="M12 3 14.5 8 20 8l-4.5 3.5 1.5 6-5-3.5-5 3.5 1.5-6L4 8h5.5L12 3Z" />
+                </svg>
+                <h2 class="text-3xl font-bold">2.450</h2>
               </div>
-              <span class="text-lg font-bold text-gray-900">{{ item.poin }}</span>
             </div>
+            <button class="bg-[#0a45e6] px-4 py-2 rounded-xl text-white font-semibold shadow-sm">
+              Riwayat
+            </button>
           </div>
-
-          <!-- Tombol Lihat Detail -->
-          <button @click="openDetail(item)" class="w-full bg-[#EEF2FF] hover:bg-indigo-100 text-[#2563EB] text-xs font-semibold py-2.5 rounded-xl transition text-center">
-            Lihat Detail
-          </button>
         </div>
       </div>
-    </section>
 
-    <!-- Section Kategori Populer (Scroll Horizontal) -->
-    <section class="mt-8">
-      <div class="px-5 mb-3">
-        <h2 class="text-lg font-bold text-[#062923]">Kategori Populer</h2>
-      </div>
+      <section class="mt-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-[#003A36]">Pilihan Terbaik</h3>
+          <button class="text-sm font-semibold text-[#0a45e6]">Lihat Semua</button>
+        </div>
 
-      <div class="flex gap-3 overflow-x-auto px-5 pb-2 hide-scrollbar">
-        <button 
-          v-for="kat in kategoriList" 
-          :key="kat"
-          @click="selectedKategori = kat"
-          class="px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition"
-          :class="selectedKategori === kat ? 'bg-[#E5E7EB] text-gray-800 font-semibold' : 'bg-white text-gray-600 border border-gray-100'"
-        >
-          {{ kat }}
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            v-for="item in filteredItems"
+            :key="item.id"
+            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
+          >
+            <div class="h-32 relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <svg v-if="item.icon === 'beras'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16">
+                  <path d="M4 8h13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" />
+                  <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+                  <path d="M17 8V6" />
+                  <circle cx="9" cy="16" r="1" fill="#147052" stroke="none" />
+                  <circle cx="15" cy="16" r="1" fill="#147052" stroke="none" />
+                </svg>
+                <svg v-else-if="item.icon === 'minyak'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16">
+                  <rect x="5" y="4" width="10" height="16" rx="2" />
+                  <path d="M15 8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+                  <path d="M8 8h2" />
+                  <path d="M8 12h2" />
+                </svg>
+                <svg v-else-if="item.icon === 'gula'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16">
+                  <path d="M5 8c0-2 2-4 5-4 3 0 5 2 5 4 0 3-2 4-5 6-3-2-5-3-5-6Z" />
+                  <path d="M6 12c2 1 3 2 4 3" />
+                  <path d="M14 12c-1 1-2 2-3 3" />
+                </svg>
+                <svg v-else viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16">
+                  <path d="M4 8h16" />
+                  <path d="M7 8v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V8" />
+                  <path d="M9 12h6" />
+                </svg>
+              </div>
+              <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg">
+                <p class="text-xs font-semibold text-[#003A36]">{{ item.satuan }}</p>
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <h4 class="font-semibold text-[#003A36] truncate">{{ item.nama }}</h4>
+              <div class="flex items-center gap-1 text-[#0a45e6]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                  <path d="M12 3 14.5 8 20 8l-4.5 3.5 1.5 6-5-3.5-5 3.5 1.5-6L4 8h5.5L12 3Z" />
+                </svg>
+                <p class="text-lg font-bold">{{ item.poin }}</p>
+              </div>
+              <button class="w-full bg-[#eef5f2] py-2 rounded-xl text-[#003A36] font-semibold border border-[#e3ece8]">
+                Lihat Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md">
+      <div class="max-w-md mx-auto flex justify-around py-2">
+        <button @click="keBeranda" class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="m3 10 9-7 9 7" />
+            <path d="M5 10v8a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-8" />
+          </svg>
+          Beranda
+        </button>
+        <button class="flex flex-col items-center text-[#003A36] font-medium text-xs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 7h16" />
+            <path d="M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" />
+            <path d="M9 11h6" />
+            <path d="M9 15h6" />
+          </svg>
+          Katalog
+        </button>
+        <button @click="keInformasi" class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 5h16" />
+            <path d="M4 10h16" />
+            <path d="M4 15h10" />
+            <path d="M16 15l2 2 4-4" />
+          </svg>
+          Informasi
         </button>
       </div>
-    </section>
-
-    <!-- Bottom Navigation Component -->
-    <BottomNavWarga />
+    </nav>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import BottomNavWarga from '../../components/BottomNavWarga.vue'
 
 const router = useRouter()
+const search = ref('')
 
-const searchQuery = ref('')
-const selectedKategori = ref('Semua')
-const totalPoin = ref(2450)
-
-const kategoriList = ['Semua', 'Bumbu Dapur', 'Kebutuhan Pokok', 'Minyak & Olahan']
-
-// Data Produk Sembako sesuai UI acuan
-const daftarProduk = ref([
-  {
-    id: 1,
-    nama: 'Beras',
-    ukuran: '5kg',
-    poin: 150,
-    kategori: 'Kebutuhan Pokok',
-    image: 'https://placehold.co/300x300/E8F0EE/062923?text=Beras+5kg'
-  },
-  {
-    id: 2,
-    nama: 'Gula',
-    ukuran: '1kg',
-    poin: 160,
-    kategori: 'Bumbu Dapur',
-    image: 'https://placehold.co/300x300/FDF8F0/062923?text=Gula+1kg'
-  },
-  {
-    id: 3,
-    nama: 'Minyak Goreng',
-    ukuran: '1L',
-    poin: 180,
-    kategori: 'Minyak & Olahan',
-    image: 'https://placehold.co/300x300/FFFBEB/062923?text=Minyak+1L'
-  },
-  {
-    id: 4,
-    nama: 'Garam',
-    ukuran: '500g',
-    poin: 50,
-    kategori: 'Bumbu Dapur',
-    image: 'https://placehold.co/300x300/F0EDF5/062923?text=Garam+500g'
-  }
+const catalogItems = ref([
+  { id: 1, nama: 'Beras Premium', poin: 150, satuan: '5kg', icon: 'beras' },
+  { id: 2, nama: 'Gula Pasir', poin: 160, satuan: '1kg', icon: 'gula' },
+  { id: 3, nama: 'Minyak Goreng', poin: 180, satuan: '1L', icon: 'minyak' },
+  { id: 4, nama: 'Garam', poin: 50, satuan: '500g', icon: 'garam' },
 ])
 
-// Filtering berdasarkan Pencarian & Kategori
-const filteredProduk = computed(() => {
-  return daftarProduk.value.filter(item => {
-    const matchSearch = item.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchKategori = selectedKategori.value === 'Semua' || item.kategori === selectedKategori.value
-    return matchSearch && matchKategori
+const filteredItems = computed(() => {
+  const keyword = search.value.toLowerCase()
+  return catalogItems.value.filter((item) => {
+    return item.nama.toLowerCase().includes(keyword) || item.satuan.toLowerCase().includes(keyword)
   })
 })
 
-const formatAngka = (num) => new Intl.NumberFormat('id-ID').format(num)
-
-function keRiwayat() {
-  router.push('/riwayat-warga')
+function keBeranda() {
+  router.push('/warga')
 }
 
-function openDetail(item) {
-  console.log('Detail produk:', item)
-  // Implementasi modal detail atau navigasi detail produk
-}
-
-function lihatSemua() {
-  selectedKategori.value = 'Semua'
-  searchQuery.value = ''
+function keInformasi() {
+  router.push('/informasi')
 }
 </script>
-
-<style scoped>
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.line-clamp-1 {
-  display: -webkit-box;
-  line-clamp: 1;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

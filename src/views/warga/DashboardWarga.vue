@@ -78,10 +78,29 @@
           :key="item.id" 
           class="min-w-[150px] w-[150px] bg-white rounded-[20px] p-3 shadow-sm snap-start shrink-0 cursor-pointer hover:shadow-md transition"
         >
-          <!-- Ganti src dengan gambar asli jika ada -->
-          <div class="w-full aspect-square bg-[#F3F4F6] rounded-xl mb-3 overflow-hidden flex items-center justify-center">
-            <img v-if="item.image" :src="item.image" :alt="item.nama" class="w-full h-full object-cover" />
-            <span v-else class="text-4xl">{{ item.icon }}</span>
+          <div class="w-full h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+            <svg v-if="item.icon === 'beras'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <path d="M4 8h13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" />
+              <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+              <path d="M17 8V6" />
+              <circle cx="9" cy="16" r="1" fill="#147052" stroke="none" />
+              <circle cx="15" cy="16" r="1" fill="#147052" stroke="none" />
+            </svg>
+            <svg v-else-if="item.icon === 'minyak'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <rect x="5" y="4" width="10" height="16" rx="2" />
+              <path d="M15 8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+              <path d="M8 8h2" />
+              <path d="M8 12h2" />
+            </svg>
+            <svg v-else-if="item.icon === 'gula'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <path d="M5 8c0-2 2-4 5-4 3 0 5 2 5 4 0 3-2 4-5 6-3-2-5-3-5-6Z" />
+              <path d="M6 12c2 1 3 2 4 3" />
+              <path d="M14 12c-1 1-2 2-3 3" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 8v4l2 2" />
+            </svg>
           </div>
           <p class="text-[13px] font-semibold text-gray-900 leading-tight line-clamp-2 h-[34px]">{{ item.nama }}</p>
           <p class="text-[17px] font-bold text-[#1A4BFF] mt-1">{{ formatAngka(item.poin) }} Poin</p>
@@ -106,16 +125,28 @@
           :key="index" 
           class="bg-white rounded-3xl p-4 shadow-sm flex gap-4 items-start"
         >
-          <!-- Ikon Kategori Dinamis -->
-          <div 
-            class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" 
-            :class="getKategoriStyles(item.jenis).bg"
-          >
-            <component :is="getKategoriStyles(item.jenis).icon" :class="getKategoriStyles(item.jenis).color" class="w-7 h-7" />
+          <div class="shrink-0 mt-0.5">
+            <svg v-if="getIconType(item.judul) === 'jadwal'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M16 2v4" />
+              <path d="M8 2v4" />
+              <path d="M3 10h18" />
+            </svg>
+            <svg v-else-if="getIconType(item.judul) === 'promo'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M12 2 14.5 8 21 8l-4.5 3.5 1.5 6-5-3.5-5 3.5 1.5-6L3 8h6.5L12 2Z" />
+            </svg>
+            <svg v-else-if="getIconType(item.judul) === 'edukasi'" viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M12 3 4 7l8 4 8-4-8-4Z" />
+              <path d="M4 12l8 4 8-4" />
+              <path d="M4 17l8 4 8-4" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="#147052" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 8v4l2 2" />
+            </svg>
           </div>
-          
-          <div class="flex-1 pt-1">
-            <p class="text-[11px] font-bold uppercase tracking-wider mb-1" :class="getKategoriStyles(item.jenis).textColor">
+          <div class="flex-1">
+            <p class="text-xs font-bold text-[#003A36] uppercase tracking-wide">
               {{ item.jenis || 'INFO' }}
             </p>
             <h4 class="text-[14px] font-bold text-gray-900 leading-snug">{{ item.judul }}</h4>
@@ -125,15 +156,44 @@
       </div>
     </section>
 
-    <!-- Floating Action Button (FAB) '+' -->
-    <button class="fixed bottom-24 right-5 w-14 h-14 bg-[#01352c] text-white rounded-[20px] shadow-lg flex items-center justify-center hover:bg-[#00241e] transition-transform active:scale-95 z-40">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-    </button>
-
-    <!-- Navigation Bawah -->
-    <BottomNavWarga />
+    <!-- Navigasi Bawah -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md">
+      <div class="max-w-md mx-auto flex justify-around py-2">
+        <button
+          class="flex flex-col items-center text-[#003A36] font-medium text-xs"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="m3 10 9-7 9 7" />
+            <path d="M5 10v8a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-8" />
+          </svg>
+          Beranda
+        </button>
+        <button
+          @click="keKatalog"
+          class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 7h16" />
+            <path d="M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" />
+            <path d="M9 11h6" />
+            <path d="M9 15h6" />
+          </svg>
+          Katalog
+        </button>
+        <button
+          @click="keInformasi"
+          class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
+            <path d="M4 5h16" />
+            <path d="M4 10h16" />
+            <path d="M4 15h10" />
+            <path d="M16 15l2 2 4-4" />
+          </svg>
+          Informasi
+        </button>
+      </div>
+    </nav>
   </div>
 </template>
 
@@ -167,9 +227,9 @@ const warga = ref({
 
 // Data Sembako disesuaikan dengan gambar
 const sembako = ref([
-  { id: 1, nama: 'Beras Premium 5kg', poin: 650, image: 'https://placehold.co/300x300/E8F0EE/062923?text=Beras' },
-  { id: 2, nama: 'Minyak Goreng 2L', poin: 320, image: 'https://placehold.co/300x300/FDF8F0/062923?text=Minyak' },
-  { id: 3, nama: 'Gula Pasir 1kg', poin: 150, image: 'https://placehold.co/300x300/F0EDF5/062923?text=Gula' },
+  { id: 1, nama: 'Beras Premium 5kg', poin: 650, icon: 'beras' },
+  { id: 2, nama: 'Minyak Goreng 2L', poin: 320, icon: 'minyak' },
+  { id: 3, nama: 'Gula Pasir 1kg', poin: 150, icon: 'gula' },
 ])
 
 // Data Pengumuman Mock (Jika API kosong)
@@ -218,6 +278,14 @@ async function fetchPengumuman() {
   } finally {
     loadingPengumuman.value = false
   }
+}
+
+function getIconType(judul) {
+  const kata = (judul || '').toLowerCase()
+  if (kata.includes('jadwal') || kata.includes('penjemputan')) return 'jadwal'
+  if (kata.includes('promo') || kata.includes('diskon')) return 'promo'
+  if (kata.includes('edukasi') || kata.includes('tips')) return 'edukasi'
+  return 'info'
 }
 
 // Navigasi
