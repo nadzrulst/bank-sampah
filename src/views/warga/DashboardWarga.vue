@@ -168,8 +168,8 @@
           </svg>
           Beranda
         </button>
-        <button
-          @click="keKatalog"
+        <router-link
+          to="/katalog"
           class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
@@ -179,9 +179,9 @@
             <path d="M9 15h6" />
           </svg>
           Katalog
-        </button>
-        <button
-          @click="keInformasi"
+        </router-link>
+        <router-link
+          to="/informasi"
           class="flex flex-col items-center text-gray-400 hover:text-gray-600 text-xs"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mb-1">
@@ -191,7 +191,7 @@
             <path d="M16 15l2 2 4-4" />
           </svg>
           Informasi
-        </button>
+        </router-link>
       </div>
     </nav>
   </div>

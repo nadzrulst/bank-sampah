@@ -61,3 +61,17 @@ temp/
 
 # Local hosting / Laragon
 *.local
+appsScript/warga.gs
+appsScript/transaksi.gs
+appsScript/pengumuman.gs
+appsScript/master.gs
+appsScript/kode.gs
+appsScript/router.gs
+appsScript/keuangan.gs
+appsScript/helper.gs
+appsScript/config.gs
+appsScript/auth.gs
+appsScript/Bank Sampah Bojong Karya 2.xlsx
+router.gs
+.gitignore
+router.gs

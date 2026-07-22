@@ -55,12 +55,12 @@
             </div>
 
             <p class="mt-5 text-[42px] font-bold leading-none text-[#126047]">
-              5.150
+              {{ totalSaldoPoin.toLocaleString("id-ID") }}
               <span class="text-[30px]">Poin</span>
             </p>
 
             <p class="mt-5 text-[17px] text-[#687481]">
-              Setara dengan Rp 51.500
+              Setara dengan Rp {{ totalSaldoPoin.toLocaleString("id-ID") }}
             </p>
           </div>
 
@@ -135,7 +135,7 @@
       <section class="mt-6">
         <button
           type="button"
-          @click="showForm = true"
+          @click="openFormModal"
           class="flex w-full items-center justify-between rounded-[22px] bg-[#08704f] px-5 py-4 text-white shadow-[0_8px_18px_rgba(8,112,79,0.22)] transition active:scale-[0.98]"
         >
           <span class="flex items-center gap-3">
@@ -266,13 +266,11 @@
 
           <button
             type="button"
-            class="flex items-center gap-1 text-[14px] text-[#687481]"
+            @click="loadInitialData"
+            class="flex items-center gap-1 text-[14px] text-[#08704f]"
           >
-            Lihat semua
-
-            <span class="material-symbols-outlined text-[22px]">
-              chevron_right
-            </span>
+            <span class="material-symbols-outlined text-[18px]" :class="{ 'animate-spin': isLoadingData }">refresh</span>
+            Refresh
           </button>
         </div>
 
@@ -285,7 +283,7 @@
             <div
               :class="[
                 'flex h-[58px] w-[58px] shrink-0 items-center justify-center rounded-[16px]',
-                t.amount > 0 ? 'bg-[#eef3df]' : 'bg-[#f7f0df]',
+                t.amount >= 0 ? 'bg-[#eef3df]' : 'bg-[#f7f0df]',
               ]"
             >
               <span class="material-symbols-outlined text-[32px] text-[#147052]">
@@ -307,10 +305,10 @@
               <p
                 :class="[
                   'whitespace-nowrap text-[16px] font-semibold',
-                  t.amount > 0 ? 'text-[#08704f]' : 'text-red-500',
+                  t.amount >= 0 ? 'text-[#08704f]' : 'text-red-500',
                 ]"
               >
-                {{ t.amount > 0 ? "+" : "-" }} Rp
+                {{ t.amount >= 0 ? "+" : "-" }} Rp
                 {{ Math.abs(t.amount).toLocaleString("id-ID") }}
               </p>
 
@@ -333,6 +331,46 @@
         </div>
       </section>
 
+      <!-- Panel Log Debugger -->
+      <section class="mt-8 rounded-2xl bg-slate-900 p-4 text-xs font-mono text-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400 text-[18px]">terminal</span>
+            <span class="font-semibold text-white">Log Debugger API & Spreadsheet</span>
+          </div>
+          <button
+            type="button"
+            @click="showLogs = !showLogs"
+            class="text-xs text-emerald-400 underline"
+          >
+            {{ showLogs ? 'Sembunyikan Log' : `Lihat Log (${debugLogs.length})` }}
+          </button>
+        </div>
+
+        <div v-if="showLogs" class="space-y-2 max-h-60 overflow-y-auto">
+          <div v-if="debugLogs.length === 0" class="text-slate-400 italic">
+            Belum ada log aktif. Silakan coba simpan transaksi atau tekan Refresh.
+          </div>
+          <div
+            v-for="(log, idx) in debugLogs"
+            :key="idx"
+            :class="[
+              'p-2 rounded border text-[11px] leading-relaxed',
+              log.type === 'error' ? 'bg-red-950/60 border-red-800 text-red-300' :
+              log.type === 'success' ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300' :
+              'bg-slate-800/80 border-slate-700 text-slate-300'
+            ]"
+          >
+            <div class="flex items-center justify-between font-semibold mb-1">
+              <span>[{{ log.time }}] {{ log.title }}</span>
+              <span class="uppercase text-[10px] px-1.5 py-0.5 rounded" :class="log.type === 'error' ? 'bg-red-800 text-white' : 'bg-emerald-800 text-white'">{{ log.type }}</span>
+            </div>
+            <div>{{ log.message }}</div>
+            <pre v-if="log.detail" class="mt-1 p-1 bg-black/40 rounded text-[10px] whitespace-pre-wrap overflow-x-auto">{{ JSON.stringify(log.detail, null, 2) }}</pre>
+          </div>
+        </div>
+      </section>
+
       <!-- Bottom Navigation -->
       <BottomNav />
     </div>
@@ -343,10 +381,10 @@
     <div
       v-if="showForm"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6"
-      @click.self="showForm = false"
+      @click.self="closeFormModal"
     >
       <div
-        class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-[24px] bg-white p-5 shadow-2xl"
+        class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-[24px] bg-white p-5 shadow-2xl relative"
       >
         <!-- Modal Header -->
         <div class="mb-5 flex items-center justify-between">
@@ -357,7 +395,7 @@
           <button
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-[#687481]"
-            @click="showForm = false"
+            @click="closeFormModal"
           >
             <span class="material-symbols-outlined text-[22px]">
               close
@@ -366,25 +404,49 @@
         </div>
 
         <!-- Nama Warga -->
-        <label class="text-[14px] text-[#687481]">
-          Nama Warga
-        </label>
+        <div class="relative">
+          <label class="text-[14px] text-[#687481]">
+            Nama Warga
+          </label>
 
-        <input
-          v-model="namaWarga"
-          class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-[#147052]"
-          placeholder="Contoh: Rahmat"
-        />
+          <input
+            v-model="namaWarga"
+            @input="onNamaWargaInput"
+            @blur="onNamaWargaBlur"
+            class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-[#147052]"
+            placeholder="Ketik nama warga dari spreadsheet..."
+          />
 
-        <!-- RT -->
+          <!-- Rekomendasi Nama Warga murni dari spreadsheet -->
+          <div
+            v-if="showWargaSuggestions && namaWarga.trim() !== '' && filteredWargaSuggestions.length > 0"
+            class="absolute left-0 right-0 top-full z-20 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl"
+          >
+            <button
+              v-for="w in filteredWargaSuggestions"
+              :key="w.username || w.nama"
+              type="button"
+              @mousedown.prevent="selectWargaSuggestion(w)"
+              class="flex w-full items-center justify-between border-b border-slate-100 px-4 py-2.5 text-left text-sm hover:bg-emerald-50 focus:bg-emerald-50 transition"
+            >
+              <div>
+                <p class="font-medium text-[#142431]">{{ w.nama }}</p>
+                <p class="text-xs text-[#687481]" v-if="w.username">@{{ w.username }}</p>
+              </div>
+              <span class="text-xs font-semibold text-[#147052]" v-if="w.no_hp">{{ w.no_hp }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RT / Catatan -->
         <label class="mt-4 block text-[14px] text-[#687481]">
-          RT
+          RT / Catatan (Opsional)
         </label>
 
         <input
           v-model="rt"
           class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-[#147052]"
-          placeholder="07"
+          placeholder="Contoh: 07 / Blok A"
         />
 
         <!-- Item Sampah -->
@@ -399,7 +461,7 @@
               class="text-sm font-medium text-[#147052]"
               @click="addItem"
             >
-              Tambah Item
+              + Tambah Item
             </button>
           </div>
 
@@ -407,41 +469,77 @@
             <div
               v-for="(item, index) in items"
               :key="index"
-              class="rounded-xl border border-slate-100 p-3"
+              class="rounded-xl border border-slate-200 p-3 bg-slate-50/50"
             >
-              <input
-                v-model="item.kategori"
-                placeholder="Kategori"
-                class="mb-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#147052]"
-              />
+              <!-- Dropdown Kategori Sampah -->
+              <label class="mb-1 block text-xs font-medium text-[#687481]">
+                Kategori Sampah
+              </label>
 
-              <div class="flex gap-2">
-                <input
-                  v-model.number="item.berat"
-                  type="number"
-                  min="0"
-                  placeholder="Berat (kg)"
-                  class="w-1/2 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#147052]"
-                />
-
-                <button
-                  type="button"
-                  class="w-1/2 rounded-lg bg-red-50 text-sm text-red-600"
-                  @click="removeItem(index)"
+              <select
+                v-model="item.kode"
+                class="mb-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#147052]"
+              >
+                <option value="" disabled>-- Pilih Kategori Sampah --</option>
+                <option
+                  v-for="cat in masterSampahList"
+                  :key="cat.kode || cat.nama_kategori || cat.nama"
+                  :value="cat.kode || cat.nama_kategori || cat.nama"
                 >
-                  Hapus
-                </button>
+                  {{ cat.nama_kategori || cat.nama }}
+                </option>
+              </select>
+
+              <div class="flex gap-2 items-center">
+                <div class="w-1/2">
+                  <label class="mb-1 block text-xs font-medium text-[#687481]">
+                    Berat (kg)
+                  </label>
+                  <input
+                    v-model.number="item.berat"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    placeholder="0.0"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#147052]"
+                  />
+                </div>
+
+                <div class="w-1/2 flex items-end pt-5">
+                  <button
+                    type="button"
+                    class="w-full rounded-lg bg-red-50 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
+                    @click="removeItem(index)"
+                  >
+                    Hapus Item
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Banner Error & Petunjuk Update Deployment -->
+        <div v-if="lastErrorMsg" class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
+          <p class="font-bold flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            Gagal: {{ lastErrorMsg }}
+          </p>
+          <p class="mt-1 leading-relaxed">
+            <strong>Penyebab:</strong> Google Apps Script server pada URL deployment yang dipanggil belum di-deploy ke versi terbaru (.gs).
+          </p>
+          <p class="mt-1 leading-relaxed text-red-900 font-semibold">
+            👉 <strong>Solusi:</strong> Buka script.google.com -> Klik <em>Deploy</em> -> <em>New Deployment</em> -> Pilih <em>Web App</em> -> Set <em>Who has access: Anyone</em> -> Simpan & Deploy.
+          </p>
+        </div>
+
         <!-- Modal Actions -->
-        <div class="mt-5 flex gap-2">
+        <div class="mt-6 flex gap-2">
           <button
             type="button"
             class="w-1/3 rounded-xl bg-slate-100 py-3 text-sm font-medium text-[#687481]"
-            @click="showForm = false"
+            @click="closeFormModal"
+            :disabled="isSubmitting"
           >
             Batal
           </button>
@@ -449,9 +547,11 @@
           <button
             type="button"
             @click.prevent="submitTransaction"
-            class="w-2/3 rounded-xl bg-[#08704f] py-3 text-sm font-semibold text-white"
+            :disabled="isSubmitting"
+            class="w-2/3 flex items-center justify-center gap-2 rounded-xl bg-[#08704f] py-3 text-sm font-semibold text-white transition active:scale-[0.98] disabled:opacity-50"
           >
-            Simpan Transaksi
+            <span v-if="isSubmitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+            <span>{{ isSubmitting ? 'Menyimpan...' : 'Simpan Transaksi' }}</span>
           </button>
         </div>
       </div>
@@ -460,30 +560,103 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { submitSetoran } from "../services/api";
+import { ref, computed, onMounted } from "vue";
+import { submitSetoran, getMasterSampah, getWargaList, getRiwayatTransaksi, getDashboardData } from "../services/api";
 import BottomNav from "../components/BottomNav.vue";
 
 const showForm = ref(false);
 const namaWarga = ref("");
+const selectedWargaObj = ref(null);
+const showWargaSuggestions = ref(false);
 const rt = ref("");
+const isSubmitting = ref(false);
+const isLoadingData = ref(false);
+const lastErrorMsg = ref("");
+
+const showLogs = ref(true);
+const debugLogs = ref([]);
+
+function addLog(type, title, message, detail = null) {
+  const timeStr = new Date().toLocaleTimeString('id-ID');
+  debugLogs.value.unshift({
+    time: timeStr,
+    type,
+    title,
+    message,
+    detail
+  });
+  console.log(`[DEBUG_LOG][${type.toUpperCase()}] ${title}: ${message}`, detail || '');
+}
+
+const masterSampahList = ref([]);
+const wargaList = ref([]);
+const totalSaldoPoin = ref(0);
 
 const items = ref([
   {
-    kategori: "",
-    berat: 0,
+    kode: "",
+    berat: null,
   },
 ]);
 
+// Filter Warga dari data spreadsheet yang di-load via API
+const filteredWargaSuggestions = computed(() => {
+  const queryText = namaWarga.value.toLowerCase().trim();
+  if (!queryText) {
+    return [];
+  }
+
+  return wargaList.value.filter((w) => {
+    const nameMatch = String(w.nama || "").toLowerCase().includes(queryText);
+    const userMatch = String(w.username || "").toLowerCase().includes(queryText);
+    return nameMatch || userMatch;
+  });
+});
+
+function onNamaWargaInput() {
+  showWargaSuggestions.value = true;
+  if (selectedWargaObj.value && selectedWargaObj.value.nama !== namaWarga.value) {
+    selectedWargaObj.value = null;
+  }
+}
+
+function onNamaWargaBlur() {
+  setTimeout(() => {
+    showWargaSuggestions.value = false;
+  }, 200);
+}
+
+function selectWargaSuggestion(w) {
+  namaWarga.value = w.nama;
+  selectedWargaObj.value = w;
+  showWargaSuggestions.value = false;
+  addLog('info', 'Warga Dipilih', `Nama: ${w.nama}, Username: ${w.username}`, w);
+}
+
+function openFormModal() {
+  showForm.value = true;
+  showWargaSuggestions.value = false;
+  lastErrorMsg.value = "";
+}
+
+function closeFormModal() {
+  showForm.value = false;
+  showWargaSuggestions.value = false;
+}
+
 function addItem() {
   items.value.push({
-    kategori: "",
-    berat: 0,
+    kode: "",
+    berat: null,
   });
 }
 
 function removeItem(i) {
-  items.value.splice(i, 1);
+  if (items.value.length > 1) {
+    items.value.splice(i, 1);
+  } else {
+    items.value = [{ kode: "", berat: null }];
+  }
 }
 
 const query = ref("");
@@ -516,23 +689,7 @@ function toggleChip(chip) {
   }
 }
 
-const transactions = ref([
-  {
-    title: "Setoran Sampah",
-    subtitle: "Budi Santoso • 12.5 kg",
-    amount: 45000,
-    time: "10:30 WIB",
-    type: "Setoran",
-  },
-  {
-    title: "Tarik Saldo",
-    subtitle: "Ani Yudhoyono",
-    amount: -20000,
-    time: "09:15 WIB",
-    type: "Biaya",
-    aliases: ["Penarikan"],
-  },
-]);
+const transactions = ref([]);
 
 const filteredTransactions = computed(() => {
   const q = query.value.toLowerCase().trim();
@@ -560,38 +717,130 @@ const filteredTransactions = computed(() => {
   });
 });
 
+onMounted(async () => {
+  await loadInitialData();
+});
+
+async function loadInitialData() {
+  isLoadingData.value = true;
+  addLog('info', 'Memuat Data Initial', 'Memanggil API get_warga, master_sampah, riwayat_transaksi...');
+
+  try {
+    const [resMaster, resWarga, resTransaksi, resDashboard] = await Promise.allSettled([
+      getMasterSampah(),
+      getWargaList(),
+      getRiwayatTransaksi(),
+      getDashboardData(),
+    ]);
+
+    if (resMaster.status === 'fulfilled' && resMaster.value?.success && Array.isArray(resMaster.value.data)) {
+      masterSampahList.value = resMaster.value.data.map(item => ({
+        ...item,
+        nama_kategori: item.nama_kategori || item.nama || item.kategori
+      }));
+      addLog('success', 'Master Sampah Loaded', `Jumlah item: ${masterSampahList.value.length}`, masterSampahList.value);
+    } else {
+      addLog('error', 'Master Sampah Fail', resMaster.reason?.message || 'Gagal memuat master sampah');
+    }
+
+    if (resWarga.status === 'fulfilled' && resWarga.value?.success && Array.isArray(resWarga.value.data)) {
+      wargaList.value = resWarga.value.data.map(w => ({
+        id_warga: w.id_warga || '',
+        nama: String(w.nama || w.nama_warga || w.username || '').trim(),
+        username: String(w.username || w.nama || '').trim(),
+        no_hp: String(w.no_hp || w.nohp || '').trim()
+      })).filter(w => w.nama !== '');
+      addLog('success', 'Warga Loaded', `Jumlah warga di spreadsheet: ${wargaList.value.length}`, wargaList.value);
+    } else {
+      addLog('error', 'Warga Load Fail / Belum Deploy get_warga', resWarga.reason?.message || JSON.stringify(resWarga.value));
+    }
+
+    if (resTransaksi.status === 'fulfilled' && resTransaksi.value?.success && Array.isArray(resTransaksi.value.data)) {
+      transactions.value = resTransaksi.value.data.map((item) => ({
+        title: "Setoran Sampah",
+        subtitle: `${item.nama || item.username} • ${item.total_kg || 0} kg`,
+        amount: Number(item.total_rupiah || 0),
+        time: item.tanggal ? String(item.tanggal).split(' ')[1] || item.tanggal : "Terbaru",
+        type: "Setoran"
+      }));
+      addLog('success', 'Riwayat Transaksi Loaded', `Jumlah transaksi: ${transactions.value.length}`);
+    }
+
+    if (resDashboard.status === 'fulfilled' && resDashboard.value?.success && resDashboard.value.data) {
+      totalSaldoPoin.value = Number(resDashboard.value.data.total_poin || 0);
+    }
+  } catch (err) {
+    addLog('error', 'Critical Load Failure', err.message);
+  } finally {
+    isLoadingData.value = false;
+  }
+}
+
 async function submitTransaction() {
-  if (
-    !namaWarga.value ||
-    !rt.value ||
-    items.value.some((it) => !it.kategori || !it.berat)
-  ) {
-    alert("Harap lengkapi data warga dan item sampah.");
+  lastErrorMsg.value = "";
+  const nameTrimmed = namaWarga.value.trim();
+
+  if (!nameTrimmed) {
+    alert("Harap isi nama warga.");
     return;
   }
 
+  const invalidItem = items.value.find((it) => !it.kode || !it.berat || Number(it.berat) <= 0);
+  if (invalidItem) {
+    alert("Harap pilih kategori sampah dan isi berat lebih dari 0 kg.");
+    return;
+  }
+
+  const matchedWarga = selectedWargaObj.value || wargaList.value.find(w => 
+    String(w.nama || "").toLowerCase().trim() === nameTrimmed.toLowerCase() ||
+    String(w.username || "").toLowerCase().trim() === nameTrimmed.toLowerCase()
+  );
+  
+  const targetUsername = matchedWarga ? matchedWarga.username : nameTrimmed.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  const payload = {
+    username: targetUsername,
+    nama: nameTrimmed,
+    nama_warga: nameTrimmed,
+    rt: rt.value || "-",
+    items: items.value.map(it => ({
+      kode: it.kode,
+      kategori: it.kode,
+      berat: Number(it.berat)
+    }))
+  };
+
+  addLog('info', 'Mengirim Transaksi', `Target Username: "${targetUsername}", Nama: "${nameTrimmed}"`, payload);
+
+  isSubmitting.value = true;
   try {
-    await submitSetoran({
-      namaWarga: namaWarga.value,
-      rt: rt.value,
-      items: items.value,
-    });
+    const res = await submitSetoran(payload);
 
-    alert("Transaksi setoran berhasil disimpan.");
+    addLog(res && res.success ? 'success' : 'error', 'Response Server Simpan Setoran', res?.message || 'Tanpa pesan', res);
 
-    namaWarga.value = "";
-    rt.value = "";
+    if (res && res.success) {
+      alert("Transaksi setoran berhasil disimpan ke database spreadsheet!");
 
-    items.value = [
-      {
-        kategori: "",
-        berat: 0,
-      },
-    ];
+      // Reset form state
+      namaWarga.value = "";
+      selectedWargaObj.value = null;
+      rt.value = "";
+      items.value = [{ kode: "", berat: null }];
+      showForm.value = false;
 
-    showForm.value = false;
+      // Reload fresh data from database
+      await loadInitialData();
+    } else {
+      const errMsg = res?.message || "Terjadi kesalahan server.";
+      lastErrorMsg.value = errMsg;
+      alert("Gagal menyimpan transaksi: " + errMsg);
+    }
   } catch (e) {
-    alert("Gagal mengirim data. Periksa endpoint API.");
+    addLog('error', 'Exception Simpan Setoran', e.message);
+    lastErrorMsg.value = e.message;
+    alert("Gagal mengirim data setoran: " + e.message);
+  } finally {
+    isSubmitting.value = false;
   }
 }
 </script>
