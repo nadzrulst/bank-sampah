@@ -62,7 +62,7 @@
         @submit.prevent="handleLogin"
       >
 
-        <!-- Phone -->
+        <!-- Username -->
         <div>
 
           <label
@@ -75,8 +75,8 @@
             class="group flex items-center rounded-xl border border-slate-200 bg-[#f9f9ff] px-4 py-3 transition focus-within:border-[#003A36] focus-within:ring-2 focus-within:ring-[#003A36]/10"
           >
             <input
-              v-model="phone"
-              type="tel"
+              v-model="username"
+              type="text"
               placeholder="Username"
               class="w-full border-none bg-transparent p-0 outline-none focus:ring-0"
             />
@@ -193,7 +193,7 @@ import { loginOperator } from "../services/api";
 
 const router = useRouter();
 
-const phone = ref("");
+const username = ref("");
 const password = ref("");
 
 const showPassword = ref(false);
@@ -201,7 +201,7 @@ const loading = ref(false);
 
 async function handleLogin() {
 
-  if (!phone.value || !password.value) {
+  if (!username.value || !password.value) {
     alert("Silakan isi username dan password.");
     return;
   }
@@ -210,7 +210,7 @@ async function handleLogin() {
 
   try {
     const response = await loginOperator({
-      username: phone.value.trim(),
+      username: username.value.trim(),
       password: password.value,
     });
 
