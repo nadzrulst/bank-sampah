@@ -86,32 +86,6 @@
             placeholder="Tuliskan detail biaya..."
           ></textarea>
         </div>
-
-        <div>
-          <p class="text-sm font-medium text-slate-700 mb-2">
-            Foto Bukti (Opsional)
-          </p>
-          <label
-            class="block rounded-2xl border-2 border-dashed border-surface-container p-6 text-center bg-white soft-float cursor-pointer hover:border-primary/50 transition-colors"
-          >
-            <input
-              type="file"
-              accept="image/*"
-              class="hidden"
-              @change="handleFile"
-            />
-            <div
-              class="mx-auto w-12 h-12 rounded-full bg-surface-container flex items-center justify-center"
-            >
-              <span class="material-symbols-outlined text-primary"
-                >add_a_photo</span
-              >
-            </div>
-            <p class="mt-2 text-sm text-on-surface-variant">
-              Ketuk untuk unggah foto nota atau struk
-            </p>
-          </label>
-        </div>
       </form>
 
       <!-- Sticky action -->
@@ -140,8 +114,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
 import { submitBiaya, getSaldoKas } from "../services/api";
+
+const showModal = inject('showModal') || window.showModal;
 
 const nominal = ref(0);
 const keterangan = ref("");
@@ -191,10 +167,6 @@ function formatRupiah(value) {
 
 function selectCategory(cat) {
   selectedCategory.value = cat;
-}
-
-function handleFile(e) {
-  // no-op for demo; could store file for upload
 }
 
 async function submitKeuangan() {

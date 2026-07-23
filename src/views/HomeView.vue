@@ -498,6 +498,7 @@
             Refresh
           </button>
         </div>
+
         <div class="space-y-3">
           <div
             v-for="(t, i) in filteredTransactions"
@@ -1152,3 +1153,4 @@ onMounted(async () => {
   await loadInitialData();
 });
 </script>
+;k
