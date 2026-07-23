@@ -16,11 +16,11 @@
         </div>
 
         <h1 class="text-2xl font-semibold text-[#003A36]">
-          Lupa Password
+          Lupa Password Pengelola
         </h1>
 
         <p class="mt-2 text-sm text-slate-600">
-          Masukkan Username dan Nomor HP yang terdaftar untuk membuat password baru.
+          Masukkan Username dan Nomor HP Pengelola yang terdaftar untuk membuat password baru.
         </p>
       </div>
 
@@ -126,6 +126,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { resetPasswordApi } from "../services/api";
 
 const router = useRouter();
 
@@ -136,47 +137,57 @@ const confirmPassword = ref("");
 
 const loading = ref(false);
 const showPassword = ref(false);
+const debugInfo = ref("");
 
 async function resetPassword() {
+  debugInfo.value = "";
 
   if (
-    !username.value ||
-    !phone.value ||
+    !username.value.trim() ||
+    !phone.value.trim() ||
     !password.value ||
     !confirmPassword.value
   ) {
-    alert("Semua data harus diisi.");
+    alert("Semua data (Username, Nomor HP, Password Baru) harus diisi.");
     return;
   }
 
   if (password.value !== confirmPassword.value) {
-    alert("Konfirmasi password tidak sama.");
+    alert("Konfirmasi password baru tidak cocok.");
     return;
   }
 
   loading.value = true;
+  console.group("[RESET_PASSWORD_LOG]");
+  console.log("Mengirim request reset password...");
+  console.log("Username:", username.value.trim());
+  console.log("No HP:", phone.value.trim());
 
   try {
+    const res = await resetPasswordApi({
+      username: username.value.trim(),
+      no_hp: phone.value.trim(),
+      new_password: password.value
+    });
 
-    // TODO:
-    // Panggil API reset password di sini
+    console.log("Respons Server:", res);
+    console.groupEnd();
 
-    await new Promise(resolve => setTimeout(resolve,1000));
-
-    alert("Password berhasil diubah.");
-
-    router.push("/login");
-
+    if (res && res.success === false) {
+      debugInfo.value = `Gagal: ${res.message || 'Data tidak cocok'}`;
+      alert("Gagal mengubah password: " + (res.message || "Username atau No HP tidak terdaftar."));
+    } else {
+      alert("Password pengelola berhasil diubah! Silakan login dengan password baru.");
+      router.push("/login");
+    }
   } catch (error) {
-
-    alert("Gagal mengubah password.");
-
+    console.error("Reset password error:", error);
+    console.groupEnd();
+    debugInfo.value = `Error: ${error.message}`;
+    alert("Gagal mengubah password: " + (error.message || "Error koneksi ke server"));
   } finally {
-
     loading.value = false;
-
   }
-
 }
 </script>
 

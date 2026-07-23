@@ -42,7 +42,6 @@ const route = useRoute()
 
 const navItems = [
   { label: 'Beranda', to: '/dashboard', icon: 'home' },
-  { label: 'Setor', to: '/transaksi', icon: 'box' },
   { label: 'Riwayat', to: '/keuangan', icon: 'clock' },
   { label: 'Laporan', to: '/laporan', icon: 'user' }
 ]

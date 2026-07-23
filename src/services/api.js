@@ -1,6 +1,9 @@
+const DEFAULT_API_BASE_URL =
+  'https://script.google.com/macros/s/AKfycbxeKlsWmC3Y9mQE962L-W7zN7ze2c1Og-gV68BTIiyNy-67uHWMMDHB25A-gOcCOIB9/exec'
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? '/api' : 'AKfycbxmTyMi5urErL7HZl1QAcuk1bzsSaloeLVcVmnA2h2BlrWSQh8rZxxvP5JVyTDOenkx/exec')
+  (import.meta.env.DEV ? '/api' : DEFAULT_API_BASE_URL)
 
 async function request({
   method = 'GET',
@@ -13,15 +16,22 @@ async function request({
   }
 
   const metode = String(method).toUpperCase()
+
   const baseUrl = /^https?:\/\//.test(API_BASE_URL)
     ? new URL(API_BASE_URL)
     : new URL(
       API_BASE_URL,
-      typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : 'http://localhost:3000'
     )
-  const url = baseUrl
+
+  const url = new URL(baseUrl.toString())
 
   url.searchParams.set('action', action)
+  
+  // Tambahkan parameter untuk mencegah caching
+  url.searchParams.set('_t', Date.now().toString())
 
   Object.entries(params).forEach(([key, value]) => {
     if (
@@ -44,7 +54,10 @@ async function request({
       payload = {}
     }
 
-    if (typeof payload === 'object' && !Array.isArray(payload)) {
+    if (
+      typeof payload === 'object' &&
+      !Array.isArray(payload)
+    ) {
       payload = {
         ...payload,
         action
@@ -56,16 +69,13 @@ async function request({
       }
     }
 
-    // PERBAIKAN: gunakan 'text/plain' alih-alih 'application/json'.
-    // Apps Script Web App tidak mengimplementasikan doOptions(),
-    // sehingga jika Content-Type di-set ke 'application/json',
-    // browser akan mengirim CORS preflight (OPTIONS) yang gagal
-    // dan permintaan asli tidak pernah sampai ke server — inilah
-    // penyebab frontend "tidak bisa terhubung". 'text/plain'
-    // termasuk kategori CORS-simple request sehingga tidak memicu
-    // preflight. Server (router.gs) sudah mem-parsing body sebagai
-    // JSON secara manual lewat JSON.parse(e.postData.contents),
-    // jadi tidak perlu Content-Type application/json.
+    /*
+     * Gunakan text/plain agar request ke Apps Script
+     * tidak memicu CORS preflight OPTIONS.
+     *
+     * Backend Apps Script harus membaca body melalui:
+     * JSON.parse(e.postData.contents)
+     */
     options.headers = {
       'Content-Type': 'text/plain;charset=utf-8'
     }
@@ -73,74 +83,113 @@ async function request({
     options.body = JSON.stringify(payload)
   }
 
-  console.group(`[API CALL] ${metode} action=${action}`);
-  console.log('URL:', url.toString());
+  console.group(
+    `[API CALL] ${metode} action=${action}`
+  )
+
+  console.log('URL:', url.toString())
+
   if (metode === 'POST') {
-    console.log('Payload:', options.body);
+    console.log('Payload:', options.body)
   }
+
   if (Object.keys(params).length > 0) {
-    console.log('Params:', params);
+    console.log('Params:', params)
   }
 
-  let response
-
   try {
-    response = await fetch(url.toString(), options)
+    const response = await fetch(
+      url.toString(),
+      options
+    )
+
+    if (!response.ok) {
+      const errorText = await response
+        .text()
+        .catch(() => '')
+
+      console.error(
+        'Respons gagal:',
+        response.status,
+        errorText
+      )
+
+      throw new Error(
+        `Permintaan API gagal dengan status ${response.status}`
+      )
+    }
+
+    let teksRespons = ''
+
+    try {
+      teksRespons = await response.text()
+    } catch (error) {
+      console.error(
+        'Tidak dapat membaca respons teks:',
+        error
+      )
+
+      throw new Error(
+        'Respons server tidak dapat dibaca'
+      )
+    }
+
+    if (!teksRespons) {
+      console.log('Respons server kosong')
+      return {}
+    }
+
+    let hasil
+
+    try {
+      hasil = JSON.parse(teksRespons)
+    } catch (error) {
+      console.error(
+        'Respons bukan JSON:',
+        teksRespons
+      )
+
+      throw new Error(
+        'Respons server bukan JSON yang valid'
+      )
+    }
+
+    console.log('Hasil Server:', hasil)
+
+    return hasil
   } catch (error) {
-    console.error('Kesalahan jaringan:', error)
-    console.error('URL yang dipanggil:', url.toString())
-    console.error('Opsi request:', options)
-    console.groupEnd();
+    console.error('Kesalahan API:', error)
+    console.error(
+      'URL yang dipanggil:',
+      url.toString()
+    )
+    console.error(
+      'Opsi request:',
+      options
+    )
 
     throw new Error(
-      error?.message || 'Tidak dapat terhubung ke server. Periksa koneksi atau URL API.'
+      error?.message ||
+      'Tidak dapat terhubung ke server. Periksa koneksi atau URL API.'
     )
+  } finally {
+    console.groupEnd()
   }
-
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => '')
-    console.error('Respons gagal:', response.status, errorText)
-    console.groupEnd();
-    throw new Error(
-      `Permintaan API gagal dengan status ${response.status}`
-    )
-  }
-
-  let teksRespons = ''
-
-  try {
-    teksRespons = await response.text()
-  } catch (error) {
-    console.error('Tidak dapat membaca respons teks:', error)
-  }
-
-  if (!teksRespons) {
-    console.log('Respons server kosong');
-    console.groupEnd();
-    return {}
-  }
-
-  let hasil
-
-  try {
-    hasil = JSON.parse(teksRespons)
-  } catch (error) {
-    console.error('Respons bukan JSON:', teksRespons)
-    console.groupEnd();
-    throw new Error('Respons server bukan JSON yang valid')
-  }
-
-  console.log('Hasil Server:', hasil);
-  console.groupEnd();
-
-  return hasil
 }
+
+/* =========================================================
+ * PENGUJIAN KONEKSI
+ * ======================================================= */
 
 export function pingApi() {
   return request({
     action: 'ping'
   })
 }
+
+/* =========================================================
+ * MASTER SAMPAH
+ * ======================================================= */
 
 export function getMasterSampah() {
   return request({
@@ -173,6 +222,10 @@ export function hapusMasterSampah(kode) {
     }
   })
 }
+
+/* =========================================================
+ * KELOMPOK
+ * ======================================================= */
 
 export function getKelompokAktif() {
   return request({
@@ -208,7 +261,14 @@ export function hapusKelompok(idKelompok) {
   })
 }
 
-export function loginOperator({ username, password }) {
+/* =========================================================
+ * AUTENTIKASI
+ * ======================================================= */
+
+export function loginOperator({
+  username,
+  password
+}) {
   return request({
     method: 'POST',
     action: 'login_operator',
@@ -219,7 +279,10 @@ export function loginOperator({ username, password }) {
   })
 }
 
-export function loginWarga({ username, no_hp }) {
+export function loginWarga({
+  username,
+  no_hp
+}) {
   return request({
     action: 'login_warga',
     params: {
@@ -228,6 +291,18 @@ export function loginWarga({ username, no_hp }) {
     }
   })
 }
+
+export function resetPasswordApi(payload) {
+  return request({
+    method: 'POST',
+    action: 'reset_password',
+    body: payload
+  })
+}
+
+/* =========================================================
+ * WARGA
+ * ======================================================= */
 
 export function getProfilWarga(username) {
   return request({
@@ -260,6 +335,10 @@ export function tambahWarga(payload) {
     body: payload
   })
 }
+
+/* =========================================================
+ * SETORAN SAMPAH
+ * ======================================================= */
 
 export function submitSetoran(payload) {
   return request({
@@ -294,6 +373,10 @@ export function batalkanSetoran(idSetoran) {
   })
 }
 
+/* =========================================================
+ * STOK DAN PENJUALAN
+ * ======================================================= */
+
 export function getStok() {
   return request({
     action: 'stok'
@@ -308,11 +391,19 @@ export function submitPenjualan(payload) {
   })
 }
 
+/* =========================================================
+ * DASHBOARD
+ * ======================================================= */
+
 export function getDashboardData() {
   return request({
     action: 'dashboard'
   })
 }
+
+/* =========================================================
+ * KAS DAN KEUANGAN
+ * ======================================================= */
 
 export function getSaldoKas() {
   return request({
@@ -352,6 +443,10 @@ export function submitDanaMasuk(payload) {
   })
 }
 
+/* =========================================================
+ * PENGUMUMAN
+ * ======================================================= */
+
 export function getPengumuman() {
   return request({
     action: 'pengumuman'
@@ -374,7 +469,9 @@ export function ubahPengumuman(payload) {
   })
 }
 
-export function hapusPengumuman(idPengumuman) {
+export function hapusPengumuman(
+  idPengumuman
+) {
   return request({
     method: 'POST',
     action: 'hapus_pengumuman',
@@ -383,6 +480,22 @@ export function hapusPengumuman(idPengumuman) {
     }
   })
 }
+
+/* =========================================================
+ * POIN
+ * ======================================================= */
+
+export function submitTukarPoin(payload) {
+  return request({
+    method: 'POST',
+    action: 'tukar_poin',
+    body: payload
+  })
+}
+
+/* =========================================================
+ * UTILITAS
+ * ======================================================= */
 
 export function ujiApi({
   method = 'GET',
@@ -400,4 +513,4 @@ export function ujiApi({
 
 export function getApiBaseUrl() {
   return API_BASE_URL
-} 
+}
