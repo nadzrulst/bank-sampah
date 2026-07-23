@@ -1,3 +1,5 @@
+yang ini bisa 
+
 <template>
   <div class="min-h-screen bg-[#fbfaf6] px-4 pb-28 text-[#142431] md:px-0">
     <div class="mx-auto max-w-md">
@@ -177,7 +179,7 @@
 
         <!-- Catat Biaya -->
         <router-link
-          to="/riwayat"
+          to="/keuangan"
           class="flex min-h-[92px] items-center gap-3 rounded-[22px] bg-white px-4 shadow-[0_8px_18px_rgba(20,36,49,0.08)] transition active:scale-[0.98]"
         >
           <div
@@ -195,7 +197,7 @@
 
         <!-- Tukar Poin Full Width -->
         <router-link
-          to="/tukar-poin-sembako"
+          to="/tukar"
           class="col-span-2 flex min-h-[92px] items-center gap-3 rounded-[22px] bg-white px-4 shadow-[0_8px_18px_rgba(20,36,49,0.08)] transition active:scale-[0.98]"
         >
           <div
@@ -560,11 +562,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, inject } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { submitSetoran, getMasterSampah, getWargaList, getRiwayatTransaksi, getDashboardData } from "../services/api";
 import BottomNav from "../components/BottomNav.vue";
-
-const showModal = inject('showModal') || window.showModal;
 
 const showForm = ref(false);
 const namaWarga = ref("");
@@ -760,61 +760,14 @@ async function loadInitialData() {
     if (resTransaksi.status === 'fulfilled') {
       addLog('info', 'Res Transaksi Status', 'resTransaksi.status fulfilled', resTransaksi);
       if (resTransaksi.value?.success && Array.isArray(resTransaksi.value.data)) {
-        console.log('[DEBUG] Data transaksi mentah dari server:', resTransaksi.value.data);
-        
-        transactions.value = resTransaksi.value.data.map((item) => {
-          console.log('[DEBUG] Memproses item transaksi:', item);
-          
-          // Ambil nama dari berbagai kemungkinan field
-          const namaWarga = item.nama || item.nama_warga || item.username || "Nama Tidak Diketahui";
-          
-          // Format waktu untuk menampilkan hanya jam:menit
-          let waktuFormatted = "Terbaru";
-          if (item.tanggal) {
-            const tanggalStr = String(item.tanggal);
-            
-            // Coba parsing dari berbagai format tanggal
-            let date;
-            if (tanggalStr.includes('T')) {
-              // Format ISO string: 2026-07-22T17:00:00.000Z
-              date = new Date(tanggalStr);
-            } else if (tanggalStr.includes(' ')) {
-              // Format: 2026-07-22 17:00:00
-              const [tanggal, waktu] = tanggalStr.split(' ');
-              if (waktu) {
-                const [jam, menit] = waktu.split(':');
-                if (jam && menit) {
-                  waktuFormatted = `${jam}:${menit}`;
-                } else {
-                  waktuFormatted = waktu;
-                }
-              }
-            }
-            
-            if (date && !isNaN(date.getTime())) {
-              // Format waktu dalam zona waktu Asia/Jakarta
-              waktuFormatted = date.toLocaleTimeString('id-ID', {
-                timeZone: 'Asia/Jakarta',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-              });
-            }
-          }
-          
-          const result = {
-            title: "Setoran Sampah",
-            subtitle: `${namaWarga} • ${item.total_kg || 0} kg`,
-            amount: Number(item.total_rupiah || 0),
-            time: waktuFormatted,
-            type: "Setoran"
-          };
-          
-          console.log('[DEBUG] Hasil mapping item:', result);
-          return result;
-        });
+        transactions.value = resTransaksi.value.data.map((item) => ({
+          title: "Setoran Sampah",
+          subtitle: `${item.nama || item.username} • ${item.total_kg || 0} kg`,
+          amount: Number(item.total_rupiah || 0),
+          time: item.tanggal ? String(item.tanggal).split(' ')[1] || item.tanggal : "Terbaru",
+          type: "Setoran"
+        }));
         addLog('success', 'Riwayat Transaksi Loaded', `Jumlah transaksi: ${transactions.value.length}`);
-        console.log('[DEBUG] Final transactions.value:', transactions.value);
       } else {
         addLog('error', 'Riwayat Transaksi Gagal', 'resTransaksi.value is not success or data is not array', resTransaksi.value);
       }
@@ -837,13 +790,13 @@ async function submitTransaction() {
   const nameTrimmed = namaWarga.value.trim();
 
   if (!nameTrimmed) {
-    showModal({ title: 'Perhatian', message: 'Harap isi nama warga.' });
+    alert("Harap isi nama warga.");
     return;
   }
 
   const invalidItem = items.value.find((it) => !it.kode || !it.berat || Number(it.berat) <= 0);
   if (invalidItem) {
-    showModal({ title: 'Perhatian', message: 'Harap pilih kategori sampah dan isi berat lebih dari 0 kg.' });
+    alert("Harap pilih kategori sampah dan isi berat lebih dari 0 kg.");
     return;
   }
 
@@ -875,7 +828,7 @@ async function submitTransaction() {
     addLog(res && res.success ? 'success' : 'error', 'Response Server Simpan Setoran', res?.message || 'Tanpa pesan', res);
 
     if (res && res.success) {
-      await showModal({ title: 'Berhasil', message: 'Transaksi setoran berhasil disimpan ke database spreadsheet!' });
+      alert("Transaksi setoran berhasil disimpan ke database spreadsheet!");
 
       // Reset form state
       namaWarga.value = "";
@@ -889,12 +842,12 @@ async function submitTransaction() {
     } else {
       const errMsg = res?.message || "Terjadi kesalahan server.";
       lastErrorMsg.value = errMsg;
-      await showModal({ title: 'Gagal', message: 'Gagal menyimpan transaksi: ' + errMsg });
+      alert("Gagal menyimpan transaksi: " + errMsg);
     }
   } catch (e) {
     addLog('error', 'Exception Simpan Setoran', e.message);
     lastErrorMsg.value = e.message;
-    await showModal({ title: 'Gagal', message: 'Gagal mengirim data setoran: ' + e.message });
+    alert("Gagal mengirim data setoran: " + e.message);
   } finally {
     isSubmitting.value = false;
   }

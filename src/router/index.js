@@ -20,48 +20,54 @@ import SuksesTukarPoinView from "../views/warga/SuksesTukarPoinView.vue";
 import RiwayatWarga from "../views/warga/RiwayatWargaView.vue";
 
 const routes = [
-    { path: "/", redirect: "/login-warga" },
-    { path: "/login", name: "login", component: LoginView },
-    { path: "/dashboard", name: "dashboard", component: HomeView },
+  { path: "/", redirect: "/login-warga" },
+  { path: "/login", name: "login", component: LoginView },
+  { path: "/dashboard", name: "dashboard", component: HomeView },
 
-    { path: "/transaksi", name: "transaksi", component: TransaksiView },
-    { path: "/keuangan", name: "keuangan", component: KeuanganView },
-    { path: "/jual", name: "jual", component: JualPengepulView },
-    { path: "/tukar", name: "tukar", component: TukarPoinView },
-    { path: "/riwayat", name: "riwayat", component: RiwayatView },
-    { path: "/laporan", name: "laporan", component: LaporanView },
-    { path: "/password", name: "LupaPassword", component: LupaPasswordView },
-    { path: "/informasi", name: "Informasi", component: InformasiView },
-    { path: "/katalog-pengelola", name: "katalog-pengelola", component: KatalogPengelolaView },
+  { path: "/transaksi", name: "transaksi", component: TransaksiView },
+  { path: "/keuangan", name: "keuangan", component: KeuanganView },
+  { path: "/jual", name: "jual", component: JualPengepulView },
+  { path: "/tukar", name: "tukar", component: TukarPoinView },
+  { path: "/riwayat", name: "riwayat", component: RiwayatView },
+  { path: "/laporan", name: "laporan", component: LaporanView },
+  { path: "/password", name: "LupaPassword", component: LupaPasswordView },
+  { path: "/informasi", name: "Informasi", component: InformasiView },
+  {
+    path: "/katalog-pengelola",
+    name: "katalog-pengelola",
+    component: KatalogPengelolaView,
+  },
 
-    // Portal Warga
-    { path: "/login-warga", name: "login-warga", component: LoginWarga },
-    { path: "/warga", name: "warga", component: DashboardWarga },
-    { path: "/katalog", name: "katalog", component: KatalogView },
-    { path: "/tukar-poin-sembako", name: "Tukar-Poin-Sembako", component: TukarPoinSembako },
-    { path: "/riwayat-warga", name: "Riwayat-poin", component: RiwayatWarga },
+  // Portal Warga
+  { path: "/login-warga", name: "login-warga", component: LoginWarga },
+  { path: "/warga", name: "warga", component: DashboardWarga },
+  { path: "/katalog", name: "katalog", component: KatalogView },
+  {
+    path: "/tukar-poin-sembako",
+    name: "Tukar-Poin-Sembako",
+    component: TukarPoinSembako,
+  },
+  { path: "/riwayat-warga", name: "Riwayat-poin", component: RiwayatWarga },
 
-    {
-        path: "/uji-api",
-        name: "uji-api",
-        component: () =>
-            import ("../views/TestApiView.vue"),
-    },
-    {
-        path: "/tukar-poin-sembako",
-        name: "tukar-poin-sembako",
-        component: () =>
-            import ("../views/warga/TukarPoinSembakoView.vue")
-    },
-    {
-        path: "/sukses-tukar-poin",
-        name: "sukses-tukar-poin",
-        component: SuksesTukarPoinView
-    },
+  {
+    path: "/uji-api",
+    name: "uji-api",
+    component: () => import("../views/TestApiView.vue"),
+  },
+  {
+    path: "/tukar-poin-sembako",
+    name: "tukar-poin-sembako",
+    component: () => import("../views/warga/TukarPoinSembakoView.vue"),
+  },
+  {
+    path: "/sukses-tukar-poin",
+    name: "sukses-tukar-poin",
+    component: SuksesTukarPoinView,
+  },
 ];
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 export default router;
